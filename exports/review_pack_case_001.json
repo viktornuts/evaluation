@@ -1,0 +1,372 @@
+{
+  "review_task": {
+    "instruction": "Review the project assessments without overwriting them. For each requirement criterion, decide whether you agree with the original score/label. Return only disagreements or important confirmations in the external review JSON format.",
+    "expected_external_review_shape": {
+      "external_review": {
+        "id": "external_review_CASE-001_deepseek_001",
+        "dataset_id": "dataset_cpt_smoke_v1",
+        "dataset_case_id": "case_password_recovery",
+        "reviewer_name": "deepseek",
+        "reviewer_type": "llm",
+        "model_name": "model-name",
+        "prompt_version": "v1",
+        "review_status": "completed",
+        "summary": "Short summary"
+      },
+      "requirement_assessment_reviews": [
+        {
+          "id": "ext_req_rev_001",
+          "requirement_id": "requirement id from pack",
+          "criterion": "completeness",
+          "original_assessment_id": "assessment id from pack",
+          "reviewer_score": 3,
+          "reviewer_label": "partially_complete",
+          "agreement_status": "disagree",
+          "reviewer_comment": "Why the external reviewer disagrees.",
+          "severity": "major"
+        }
+      ],
+      "test_case_reviews": []
+    }
+  },
+  "dataset_case": {
+    "id": "case_password_recovery",
+    "dataset_id": "dataset_cpt_smoke_v1",
+    "case_code": "CASE-001",
+    "title": "Password recovery requirements",
+    "description": "Example case with one complete requirement and one intentionally incomplete requirement.",
+    "case_type": "smoke",
+    "created_at": "2026-06-19 12:23:32",
+    "dataset_name": "cpt_smoke",
+    "dataset_version": "v1"
+  },
+  "sources": [
+    {
+      "id": "src_password_spec",
+      "dataset_case_id": "case_password_recovery",
+      "source_type": "Документы",
+      "source_name": "Password recovery specification",
+      "source_version": "v1",
+      "raw_text": "FR-1. Пользователь должен иметь возможность восстановить пароль по email. Система отправляет ссылку восстановления на подтвержденный email. FR-2. Система должна быстро обрабатывать заявки.",
+      "metadata_json": "{\"owner\": \"qa\"}",
+      "created_at": "2026-06-19 12:23:32",
+      "fragment_id": "frag_password_recovery_email",
+      "fragment_ref": "FR-1",
+      "fragment_text": "Пользователь должен иметь возможность восстановить пароль по email. Система отправляет ссылку восстановления на подтвержденный email."
+    },
+    {
+      "id": "src_password_spec",
+      "dataset_case_id": "case_password_recovery",
+      "source_type": "Документы",
+      "source_name": "Password recovery specification",
+      "source_version": "v1",
+      "raw_text": "FR-1. Пользователь должен иметь возможность восстановить пароль по email. Система отправляет ссылку восстановления на подтвержденный email. FR-2. Система должна быстро обрабатывать заявки.",
+      "metadata_json": "{\"owner\": \"qa\"}",
+      "created_at": "2026-06-19 12:23:32",
+      "fragment_id": "frag_fast_processing",
+      "fragment_ref": "FR-2",
+      "fragment_text": "Система должна быстро обрабатывать заявки."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "req_password_recovery_email",
+      "dataset_case_id": "case_password_recovery",
+      "requirement_code": "REQ-001",
+      "requirement_text": "Пользователь должен иметь возможность восстановить пароль по email, получив ссылку восстановления на подтвержденный email.",
+      "origin": "expected",
+      "expected_status": "ready_for_generation",
+      "quality_profile_status": "good_input",
+      "risk_level": "low",
+      "is_ready_for_generation": 1,
+      "eval_run_id": null,
+      "comment": null,
+      "created_at": "2026-06-19 12:23:32",
+      "source_links": [
+        {
+          "id": "rsl_req001_frag001",
+          "requirement_id": "req_password_recovery_email",
+          "source_fragment_id": "frag_password_recovery_email",
+          "link_type": "derived_from",
+          "rationale": "Требование напрямую сформулировано во фрагменте FR-1.",
+          "fragment_ref": "FR-1",
+          "fragment_text": "Пользователь должен иметь возможность восстановить пароль по email. Система отправляет ссылку восстановления на подтвержденный email.",
+          "source_type": "Документы",
+          "source_name": "Password recovery specification"
+        }
+      ],
+      "quality_assessments": [
+        {
+          "assessment_id": "rqa_req001_ambiguity",
+          "criterion_id": "crit_ambiguity",
+          "criterion": "ambiguity",
+          "criterion_name": "Недвусмысленность",
+          "score": 5,
+          "label": "unambiguous",
+          "rationale": "Трактовка требования однозначна.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req001_completeness",
+          "criterion_id": "crit_completeness",
+          "criterion": "completeness",
+          "criterion_name": "Полнота требований",
+          "score": 5,
+          "label": "complete",
+          "rationale": "Есть субъект, действие, канал и ожидаемый результат.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req001_consistency",
+          "criterion_id": "crit_consistency",
+          "criterion": "consistency",
+          "criterion_name": "Непротиворечивость требований",
+          "score": 5,
+          "label": "consistent",
+          "rationale": "Противоречий не обнаружено.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req001_correctness",
+          "criterion_id": "crit_correctness",
+          "criterion": "correctness",
+          "criterion_name": "Корректность",
+          "score": 5,
+          "label": "correct",
+          "rationale": "Формулировка соответствует типичному сценарию восстановления пароля.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req001_source_quality",
+          "criterion_id": "crit_source_quality",
+          "criterion": "source_quality",
+          "criterion_name": "Источник требований",
+          "score": 5,
+          "label": "primary_source",
+          "rationale": "Требование взято из явного фрагмента спецификации.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req001_testability",
+          "criterion_id": "crit_testability",
+          "criterion": "testability",
+          "criterion_name": "Проверяемость",
+          "score": 5,
+          "label": "testable",
+          "rationale": "Можно проверить отправку ссылки на подтвержденный email.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req001_traceability",
+          "criterion_id": "crit_traceability",
+          "criterion": "traceability",
+          "criterion_name": "Трассируемость",
+          "score": 5,
+          "label": "traceable",
+          "rationale": "Есть связь с конкретным фрагментом FR-1.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        }
+      ]
+    },
+    {
+      "id": "req_fast_processing",
+      "dataset_case_id": "case_password_recovery",
+      "requirement_code": "REQ-002",
+      "requirement_text": "Система должна быстро обрабатывать заявки.",
+      "origin": "expected",
+      "expected_status": "insufficient_detail",
+      "quality_profile_status": "poor_input",
+      "risk_level": "high",
+      "is_ready_for_generation": 0,
+      "eval_run_id": null,
+      "comment": "Нет измеримого SLA или контекста обработки.",
+      "created_at": "2026-06-19 12:23:32",
+      "source_links": [
+        {
+          "id": "rsl_req002_frag002",
+          "requirement_id": "req_fast_processing",
+          "source_fragment_id": "frag_fast_processing",
+          "link_type": "derived_from",
+          "rationale": "Требование напрямую сформулировано во фрагменте FR-2.",
+          "fragment_ref": "FR-2",
+          "fragment_text": "Система должна быстро обрабатывать заявки.",
+          "source_type": "Документы",
+          "source_name": "Password recovery specification"
+        }
+      ],
+      "quality_assessments": [
+        {
+          "assessment_id": "rqa_req002_ambiguity",
+          "criterion_id": "crit_ambiguity",
+          "criterion": "ambiguity",
+          "criterion_name": "Недвусмысленность",
+          "score": 1,
+          "label": "ambiguous",
+          "rationale": "Слово 'быстро' допускает разные трактовки.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req002_completeness",
+          "criterion_id": "crit_completeness",
+          "criterion": "completeness",
+          "criterion_name": "Полнота требований",
+          "score": 1,
+          "label": "incomplete",
+          "rationale": "Не указан тип заявок, объем, SLA или ожидаемый порог скорости.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req002_consistency",
+          "criterion_id": "crit_consistency",
+          "criterion": "consistency",
+          "criterion_name": "Непротиворечивость требований",
+          "score": 3,
+          "label": "unknown",
+          "rationale": "Противоречий нет, но контекста недостаточно.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req002_correctness",
+          "criterion_id": "crit_correctness",
+          "criterion": "correctness",
+          "criterion_name": "Корректность",
+          "score": 3,
+          "label": "unknown",
+          "rationale": "Корректность нельзя подтвердить без бизнес-контекста.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req002_source_quality",
+          "criterion_id": "crit_source_quality",
+          "criterion": "source_quality",
+          "criterion_name": "Источник требований",
+          "score": 5,
+          "label": "primary_source",
+          "rationale": "Требование взято из явного фрагмента спецификации.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req002_testability",
+          "criterion_id": "crit_testability",
+          "criterion": "testability",
+          "criterion_name": "Проверяемость",
+          "score": 1,
+          "label": "not_testable",
+          "rationale": "Нет измеримого ожидаемого результата.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        },
+        {
+          "assessment_id": "rqa_req002_traceability",
+          "criterion_id": "crit_traceability",
+          "criterion": "traceability",
+          "criterion_name": "Трассируемость",
+          "score": 5,
+          "label": "traceable",
+          "rationale": "Есть связь с конкретным фрагментом FR-2.",
+          "assessed_by": "example",
+          "assessment_method": "human",
+          "confidence": null
+        }
+      ]
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "tc_password_recovery_positive",
+      "dataset_case_id": "case_password_recovery",
+      "test_case_code": "TC-001",
+      "title": "Successful password recovery by confirmed email",
+      "test_case_type": "WEB",
+      "direction": "positive",
+      "origin": "expected",
+      "preconditions": "Пользователь зарегистрирован, email подтвержден.",
+      "postconditions": "Пользователь получил ссылку восстановления пароля.",
+      "eval_run_id": null,
+      "created_at": "2026-06-19 12:23:32",
+      "requirement_links": [
+        {
+          "id": "rtcl_req001_tc001",
+          "requirement_id": "req_password_recovery_email",
+          "test_case_id": "tc_password_recovery_positive",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": 1,
+          "rationale": "ТК проверяет успешное восстановление пароля по подтвержденному email.",
+          "linked_by": "example",
+          "review_status": "approved",
+          "requirement_code": "REQ-001",
+          "requirement_text": "Пользователь должен иметь возможность восстановить пароль по email, получив ссылку восстановления на подтвержденный email."
+        }
+      ],
+      "steps": [
+        {
+          "id": "step_tc001_1",
+          "test_case_id": "tc_password_recovery_positive",
+          "step_number": 1,
+          "action": "Инициировать восстановление пароля для подтвержденного email.",
+          "expected_result": "Система принимает запрос на восстановление пароля.",
+          "requirement_links": [
+            {
+              "id": "step_link_step_tc001_1_req_password_recovery_email",
+              "test_case_step_id": "step_tc001_1",
+              "requirement_id": "req_password_recovery_email",
+              "source_fragment_id": "frag_password_recovery_email",
+              "rationale": "Шаг проверяет канал восстановления по email.",
+              "linked_by": "example",
+              "review_status": "approved",
+              "requirement_code": "REQ-001",
+              "requirement_text": "Пользователь должен иметь возможность восстановить пароль по email, получив ссылку восстановления на подтвержденный email."
+            }
+          ]
+        },
+        {
+          "id": "step_tc001_2",
+          "test_case_id": "tc_password_recovery_positive",
+          "step_number": 2,
+          "action": "Проверить получение ссылки восстановления на подтвержденный email.",
+          "expected_result": "На подтвержденный email отправлена ссылка восстановления пароля.",
+          "requirement_links": [
+            {
+              "id": "step_link_step_tc001_2_req_password_recovery_email",
+              "test_case_step_id": "step_tc001_2",
+              "requirement_id": "req_password_recovery_email",
+              "source_fragment_id": "frag_password_recovery_email",
+              "rationale": "Ожидаемый результат следует из FR-1.",
+              "linked_by": "example",
+              "review_status": "approved",
+              "requirement_code": "REQ-001",
+              "requirement_text": "Пользователь должен иметь возможность восстановить пароль по email, получив ссылку восстановления на подтвержденный email."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "unsupported_details": []
+}

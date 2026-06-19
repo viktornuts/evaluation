@@ -1,0 +1,265 @@
+{
+  "dataset": {
+    "id": "dataset_cpt_smoke_v1",
+    "name": "cpt_smoke",
+    "version": "v1",
+    "description": "MVP smoke dataset for CPT eval storage and requirement quality profiling.",
+    "status": "draft"
+  },
+  "cases": [
+    {
+      "id": "case_password_recovery",
+      "case_code": "CASE-001",
+      "title": "Password recovery requirements",
+      "description": "Example case with one complete requirement and one intentionally incomplete requirement.",
+      "case_type": "smoke",
+      "source_materials": [
+        {
+          "id": "src_password_spec",
+          "source_type": "Документы",
+          "source_name": "Password recovery specification",
+          "source_version": "v1",
+          "raw_text": "FR-1. Пользователь должен иметь возможность восстановить пароль по email. Система отправляет ссылку восстановления на подтвержденный email. FR-2. Система должна быстро обрабатывать заявки.",
+          "metadata": {
+            "owner": "qa"
+          },
+          "fragments": [
+            {
+              "id": "frag_password_recovery_email",
+              "fragment_ref": "FR-1",
+              "fragment_text": "Пользователь должен иметь возможность восстановить пароль по email. Система отправляет ссылку восстановления на подтвержденный email."
+            },
+            {
+              "id": "frag_fast_processing",
+              "fragment_ref": "FR-2",
+              "fragment_text": "Система должна быстро обрабатывать заявки."
+            }
+          ]
+        }
+      ],
+      "requirements": [
+        {
+          "id": "req_password_recovery_email",
+          "requirement_code": "REQ-001",
+          "requirement_text": "Пользователь должен иметь возможность восстановить пароль по email, получив ссылку восстановления на подтвержденный email.",
+          "origin": "expected",
+          "expected_status": "ready_for_generation",
+          "quality_profile_status": "good_input",
+          "risk_level": "low",
+          "is_ready_for_generation": true,
+          "source_links": [
+            {
+              "id": "rsl_req001_frag001",
+              "source_fragment_id": "frag_password_recovery_email",
+              "link_type": "derived_from",
+              "rationale": "Требование напрямую сформулировано во фрагменте FR-1."
+            }
+          ],
+          "quality_assessments": [
+            {
+              "id": "rqa_req001_source_quality",
+              "criterion": "source_quality",
+              "score": 5,
+              "label": "primary_source",
+              "rationale": "Требование взято из явного фрагмента спецификации.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_completeness",
+              "criterion": "completeness",
+              "score": 5,
+              "label": "complete",
+              "rationale": "Есть субъект, действие, канал и ожидаемый результат.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_consistency",
+              "criterion": "consistency",
+              "score": 5,
+              "label": "consistent",
+              "rationale": "Противоречий не обнаружено.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_correctness",
+              "criterion": "correctness",
+              "score": 5,
+              "label": "correct",
+              "rationale": "Формулировка соответствует типичному сценарию восстановления пароля.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_ambiguity",
+              "criterion": "ambiguity",
+              "score": 5,
+              "label": "unambiguous",
+              "rationale": "Трактовка требования однозначна.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_testability",
+              "criterion": "testability",
+              "score": 5,
+              "label": "testable",
+              "rationale": "Можно проверить отправку ссылки на подтвержденный email.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_traceability",
+              "criterion": "traceability",
+              "score": 5,
+              "label": "traceable",
+              "rationale": "Есть связь с конкретным фрагментом FR-1.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            }
+          ]
+        },
+        {
+          "id": "req_fast_processing",
+          "requirement_code": "REQ-002",
+          "requirement_text": "Система должна быстро обрабатывать заявки.",
+          "origin": "expected",
+          "expected_status": "insufficient_detail",
+          "quality_profile_status": "poor_input",
+          "risk_level": "high",
+          "is_ready_for_generation": false,
+          "comment": "Нет измеримого SLA или контекста обработки.",
+          "source_links": [
+            {
+              "id": "rsl_req002_frag002",
+              "source_fragment_id": "frag_fast_processing",
+              "link_type": "derived_from",
+              "rationale": "Требование напрямую сформулировано во фрагменте FR-2."
+            }
+          ],
+          "quality_assessments": [
+            {
+              "id": "rqa_req002_source_quality",
+              "criterion": "source_quality",
+              "score": 5,
+              "label": "primary_source",
+              "rationale": "Требование взято из явного фрагмента спецификации.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_completeness",
+              "criterion": "completeness",
+              "score": 1,
+              "label": "incomplete",
+              "rationale": "Не указан тип заявок, объем, SLA или ожидаемый порог скорости.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_consistency",
+              "criterion": "consistency",
+              "score": 3,
+              "label": "unknown",
+              "rationale": "Противоречий нет, но контекста недостаточно.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_correctness",
+              "criterion": "correctness",
+              "score": 3,
+              "label": "unknown",
+              "rationale": "Корректность нельзя подтвердить без бизнес-контекста.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_ambiguity",
+              "criterion": "ambiguity",
+              "score": 1,
+              "label": "ambiguous",
+              "rationale": "Слово 'быстро' допускает разные трактовки.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_testability",
+              "criterion": "testability",
+              "score": 1,
+              "label": "not_testable",
+              "rationale": "Нет измеримого ожидаемого результата.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_traceability",
+              "criterion": "traceability",
+              "score": 5,
+              "label": "traceable",
+              "rationale": "Есть связь с конкретным фрагментом FR-2.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            }
+          ]
+        }
+      ],
+      "test_cases": [
+        {
+          "id": "tc_password_recovery_positive",
+          "test_case_code": "TC-001",
+          "title": "Successful password recovery by confirmed email",
+          "test_case_type": "WEB",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "Пользователь зарегистрирован, email подтвержден.",
+          "postconditions": "Пользователь получил ссылку восстановления пароля.",
+          "steps": [
+            {
+              "id": "step_tc001_1",
+              "step_number": 1,
+              "action": "Инициировать восстановление пароля для подтвержденного email.",
+              "expected_result": "Система принимает запрос на восстановление пароля.",
+              "linked_requirement_ids": [
+                "req_password_recovery_email"
+              ],
+              "source_fragment_id": "frag_password_recovery_email",
+              "link_rationale": "Шаг проверяет канал восстановления по email.",
+              "linked_by": "example",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc001_2",
+              "step_number": 2,
+              "action": "Проверить получение ссылки восстановления на подтвержденный email.",
+              "expected_result": "На подтвержденный email отправлена ссылка восстановления пароля.",
+              "linked_requirement_ids": [
+                "req_password_recovery_email"
+              ],
+              "source_fragment_id": "frag_password_recovery_email",
+              "link_rationale": "Ожидаемый результат следует из FR-1.",
+              "linked_by": "example",
+              "review_status": "approved"
+            }
+          ]
+        }
+      ],
+      "requirement_test_case_links": [
+        {
+          "id": "rtcl_req001_tc001",
+          "requirement_id": "req_password_recovery_email",
+          "test_case_id": "tc_password_recovery_positive",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "ТК проверяет успешное восстановление пароля по подтвержденному email.",
+          "linked_by": "example",
+          "review_status": "approved"
+        }
+      ],
+      "unsupported_details": []
+    }
+  ]
+}

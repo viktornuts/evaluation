@@ -1,0 +1,27 @@
+{
+  "external_review": {
+    "id": "external_review_case001_example_llm_001",
+    "dataset_id": "dataset_cpt_smoke_v1",
+    "dataset_case_id": "case_password_recovery",
+    "reviewer_name": "example_external_llm",
+    "reviewer_type": "llm",
+    "model_name": "example-model",
+    "prompt_version": "v1",
+    "review_status": "completed",
+    "summary": "External reviewer mostly agrees, but considers correctness for REQ-002 lower because the requirement cannot be validated against domain context."
+  },
+  "requirement_assessment_reviews": [
+    {
+      "id": "ext_req_review_req002_correctness",
+      "requirement_id": "req_fast_processing",
+      "criterion": "correctness",
+      "original_assessment_id": "rqa_req002_correctness",
+      "reviewer_score": 2,
+      "reviewer_label": "likely_not_assessable",
+      "agreement_status": "disagree",
+      "reviewer_comment": "Project score 3 says unknown, but I would lower it because the wording is too vague to verify correctness without a domain SLA.",
+      "severity": "minor"
+    }
+  ],
+  "test_case_reviews": []
+}
