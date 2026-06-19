@@ -34,12 +34,15 @@ datasets
     -> requirement_test_case_links
     -> test_case_step_requirement_links
     -> unsupported_details
+    -> test_case_evaluation_results
     -> external_reviews
       -> external_requirement_assessment_reviews
       -> external_test_case_reviews
 ```
 
 External reviews never overwrite the primary human/project assessments. They store an independent second opinion and disagreement comments.
+
+`test_cases` stores the test case artifact itself. `test_case_evaluation_results` stores the result of checking a generated test case against the expected dataset, including match, structure, classification, hallucination, unsupported detail count, score, and rationale.
 
 ## PostgreSQL Later
 

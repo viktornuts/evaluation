@@ -24,6 +24,7 @@ dataset
       -> requirement_quality_assessments
     -> test_cases / test_case_steps
     -> requirement_test_case_links
+    -> test_case_evaluation_results
 ```
 
 It supports the first needed workflow:

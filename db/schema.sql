@@ -182,6 +182,30 @@ CREATE TABLE IF NOT EXISTS unsupported_details (
     FOREIGN KEY (test_case_step_id) REFERENCES test_case_steps(id) ON DELETE SET NULL
 );
 
+CREATE TABLE IF NOT EXISTS test_case_evaluation_results (
+    id TEXT PRIMARY KEY,
+    eval_run_id TEXT NOT NULL,
+    dataset_case_id TEXT NOT NULL,
+    generated_test_case_id TEXT NOT NULL,
+    matched_expected_test_case_id TEXT,
+    match_status TEXT NOT NULL DEFAULT 'not_evaluated',
+    structure_status TEXT NOT NULL DEFAULT 'not_evaluated',
+    classification_status TEXT NOT NULL DEFAULT 'not_evaluated',
+    hallucination_status TEXT NOT NULL DEFAULT 'not_evaluated',
+    unsupported_detail_count INTEGER NOT NULL DEFAULT 0,
+    score REAL CHECK (score IS NULL OR (score >= 0 AND score <= 1)),
+    severity TEXT NOT NULL DEFAULT 'info',
+    evaluator_name TEXT NOT NULL DEFAULT 'unknown',
+    evaluator_type TEXT NOT NULL DEFAULT 'manual',
+    rationale TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (eval_run_id) REFERENCES eval_runs(id) ON DELETE CASCADE,
+    FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (generated_test_case_id) REFERENCES test_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (matched_expected_test_case_id) REFERENCES test_cases(id) ON DELETE SET NULL,
+    UNIQUE (eval_run_id, generated_test_case_id)
+);
+
 CREATE TABLE IF NOT EXISTS external_reviews (
     id TEXT PRIMARY KEY,
     dataset_id TEXT NOT NULL,
@@ -243,6 +267,9 @@ CREATE INDEX IF NOT EXISTS idx_test_steps_tc_id ON test_case_steps(test_case_id)
 CREATE INDEX IF NOT EXISTS idx_req_tc_req_id ON requirement_test_case_links(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_tc_tc_id ON requirement_test_case_links(test_case_id);
 CREATE INDEX IF NOT EXISTS idx_step_req_step_id ON test_case_step_requirement_links(test_case_step_id);
+CREATE INDEX IF NOT EXISTS idx_tc_eval_results_run_id ON test_case_evaluation_results(eval_run_id);
+CREATE INDEX IF NOT EXISTS idx_tc_eval_results_generated_tc_id ON test_case_evaluation_results(generated_test_case_id);
+CREATE INDEX IF NOT EXISTS idx_tc_eval_results_case_id ON test_case_evaluation_results(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_external_reviews_dataset_id ON external_reviews(dataset_id);
 CREATE INDEX IF NOT EXISTS idx_external_req_reviews_review_id ON external_requirement_assessment_reviews(external_review_id);
 CREATE INDEX IF NOT EXISTS idx_external_req_reviews_requirement_id ON external_requirement_assessment_reviews(requirement_id);

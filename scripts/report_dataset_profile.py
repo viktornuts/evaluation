@@ -97,6 +97,22 @@ def report(db_path: Path) -> None:
         ).fetchall()
         print_rows("Unsupported details", unsupported)
 
+        test_case_evaluation = connection.execute(
+            """
+            SELECT
+                match_status,
+                structure_status,
+                classification_status,
+                hallucination_status,
+                COUNT(*) AS count,
+                ROUND(AVG(score), 2) AS avg_score
+            FROM test_case_evaluation_results
+            GROUP BY match_status, structure_status, classification_status, hallucination_status
+            ORDER BY count DESC
+            """
+        ).fetchall()
+        print_rows("Test case evaluation results", test_case_evaluation)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Print a profile report for the CPT eval dataset.")
