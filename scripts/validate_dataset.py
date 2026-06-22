@@ -19,7 +19,7 @@ def validate(db_path: Path) -> list[str]:
         connection.execute("PRAGMA foreign_keys = ON")
         connection.row_factory = sqlite3.Row
 
-        criteria_count = scalar(connection, "SELECT COUNT(*) FROM quality_criteria WHERE is_active = 1")
+        criteria_count = scalar(connection, "SELECT COUNT(*) FROM requirement_quality_criteria WHERE is_active = 1")
 
         rows = connection.execute(
             """

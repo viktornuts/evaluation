@@ -35,13 +35,13 @@ The MVP seeds ten requirement criteria:
 - `atomicity` - whether the requirement describes one behavior or function.
 - `feasibility` - whether the requirement is technically feasible and not contradictory.
 
-`quality_criterion_score_levels` stores the scoring rubric for requirement criteria. Each criterion has score bands for `10`, `8-9`, `6-7`, `4-5`, `1-3`, and `0`, so assessors can use the same interpretation of the `0..10` scale.
+`requirement_quality_criterion_score_levels` stores the scoring rubric for requirement criteria. Each criterion has score bands for `10`, `8-9`, `6-7`, `4-5`, `1-3`, and `0`, so assessors can use the same interpretation of the `0..10` scale.
 
 ## Core Model
 
 ```text
-quality_criteria
-  -> quality_criterion_score_levels
+requirement_quality_criteria
+  -> requirement_quality_criterion_score_levels
 datasets
   -> dataset_cases
     -> input_profile_code / input_profile_name

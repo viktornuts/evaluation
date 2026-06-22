@@ -47,7 +47,7 @@ def report(db_path: Path) -> None:
             JOIN external_reviews er ON er.id = err.external_review_id
             LEFT JOIN dataset_cases dc ON dc.id = er.dataset_case_id
             JOIN requirements r ON r.id = err.requirement_id
-            JOIN quality_criteria qc ON qc.id = err.criterion_id
+            JOIN requirement_quality_criteria qc ON qc.id = err.criterion_id
             WHERE err.agreement_status <> 'agree'
             ORDER BY dc.case_code, r.requirement_code, qc.code
             """

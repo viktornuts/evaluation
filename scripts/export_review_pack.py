@@ -92,7 +92,7 @@ def build_pack(connection: sqlite3.Connection, case_code: str) -> dict[str, Any]
                 rqa.assessment_method,
                 rqa.confidence
             FROM requirement_quality_assessments rqa
-            JOIN quality_criteria qc ON qc.id = rqa.criterion_id
+            JOIN requirement_quality_criteria qc ON qc.id = rqa.criterion_id
             WHERE rqa.requirement_id = ?
             ORDER BY qc.code
             """,

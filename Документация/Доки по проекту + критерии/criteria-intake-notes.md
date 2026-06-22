@@ -126,7 +126,7 @@
 - K4-K8 -> `test_case_quality_criteria` / `test_case_quality_assessments`
 - K2-K3 -> `test_suite_quality_criteria` / `test_suite_quality_assessments`
 - K9 -> частично `test_case_quality_criteria`, `test_suite_quality_criteria`, `unsupported_details`, `requirement_test_case_links`
-- критерии требований -> `quality_criteria` / `requirement_quality_assessments`
+- критерии требований -> `requirement_quality_criteria` / `requirement_quality_assessments`
 
 ### Нужна доработка модели
 
@@ -142,13 +142,13 @@ atomicity
 feasibility
 ```
 
-Их нужно добавить в `quality_criteria`, если принимаем этот список как основной.
+Их нужно добавить в `requirement_quality_criteria`, если принимаем этот список как основной.
 
 Решение от 2026-06-22: принимаем список требований как основной и добавляем `modifiability`, `atomicity`, `feasibility`. Также заменяем код `ambiguity` на `unambiguity`, чтобы высокий score означал хорошую однозначность и название не путало.
 
 ## Рекомендуемый порядок наполнения
 
-1. Сначала финализировать `quality_criteria` для требований.
+1. Сначала финализировать `requirement_quality_criteria` для требований.
 2. Потом финализировать `test_case_quality_criteria` для отдельного ТК.
 3. Потом финализировать `test_suite_quality_criteria` для набора ТК.
 4. После этого решить, нужна ли отдельная таблица критериев входного набора (`dataset_case_quality_criteria`).

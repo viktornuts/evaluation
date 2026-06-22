@@ -19,7 +19,7 @@ def connect(db_path: Path) -> sqlite3.Connection:
 
 
 def criterion_row(connection: sqlite3.Connection, code: str) -> sqlite3.Row:
-    row = connection.execute("SELECT id FROM quality_criteria WHERE code = ?", (code,)).fetchone()
+    row = connection.execute("SELECT id FROM requirement_quality_criteria WHERE code = ?", (code,)).fetchone()
     if row is None:
         raise ValueError(f"Unknown quality criterion: {code}")
     return row

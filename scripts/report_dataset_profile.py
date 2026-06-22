@@ -81,7 +81,7 @@ def report(db_path: Path) -> None:
             """
             SELECT qc.code AS criterion, rqa.label, COUNT(*) AS count, ROUND(AVG(rqa.score), 2) AS avg_score
             FROM requirement_quality_assessments rqa
-            JOIN quality_criteria qc ON qc.id = rqa.criterion_id
+            JOIN requirement_quality_criteria qc ON qc.id = rqa.criterion_id
             JOIN requirements r ON r.id = rqa.requirement_id
             WHERE r.origin = 'expected'
             GROUP BY qc.code, rqa.label

@@ -1,4 +1,4 @@
-INSERT OR IGNORE INTO quality_criteria (id, code, name, description, scale_min, scale_max)
+INSERT OR IGNORE INTO requirement_quality_criteria (id, code, name, description, scale_min, scale_max)
 VALUES
     ('crit_source_quality', 'source_quality', 'Источник требований', 'Надежность и пригодность источника требования: первичный источник, вторичный источник, устное уточнение, неясный источник.', 0, 10),
     ('crit_correctness', 'correctness', 'Корректность', 'Требование точно отражает реальную потребность, соответствует бизнес-цели и описывает именно то, что нужно системе делать.', 0, 10),
@@ -11,7 +11,7 @@ VALUES
     ('crit_atomicity', 'atomicity', 'Атомарность', 'Требование описывает ровно одну функцию или поведение; если можно реализовать только половину требования, оно не атомарно.', 0, 10),
     ('crit_feasibility', 'feasibility', 'Выполнимость', 'Требование технологически реализуемо на основе общедоступных знаний и не содержит физических или технических противоречий.', 0, 10);
 
-INSERT OR IGNORE INTO quality_criterion_score_levels (id, criterion_id, score_min, score_max, label, description)
+INSERT OR IGNORE INTO requirement_quality_criterion_score_levels (id, criterion_id, score_min, score_max, label, description)
 VALUES
     ('qsl_source_quality_10', 'crit_source_quality', 10, 10, 'primary_confirmed_source', 'Требование полностью подтверждено первичным источником или явно указанным фрагментом документации.'),
     ('qsl_source_quality_8_9', 'crit_source_quality', 8, 9, 'strong_source', 'Источник понятен и надежен, но есть небольшие пробелы в версии, ссылке или детализации происхождения.'),
