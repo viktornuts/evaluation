@@ -182,7 +182,7 @@ def build_pack(connection: sqlite3.Connection, case_code: str) -> dict[str, Any]
                         "requirement_id": "requirement id from pack",
                         "criterion": "completeness",
                         "original_assessment_id": "assessment id from pack",
-                        "reviewer_score": 3,
+                        "reviewer_score": 6,
                         "reviewer_label": "partially_complete",
                         "agreement_status": "disagree",
                         "reviewer_comment": "Why the external reviewer disagrees.",

@@ -36,6 +36,15 @@ Each expected requirement should have:
 - ten quality assessments: `source_quality`, `correctness`, `unambiguity`, `completeness`, `consistency`, `testability`, `traceability`, `modifiability`, `atomicity`, `feasibility`;
 - an `expected_status`, for example `ready_for_generation` or `insufficient_detail`.
 
+Quality assessment scores use a 0-10 integer scale:
+
+- `10` - fully satisfies the criterion;
+- `8-9` - good, only minor issues;
+- `6-7` - acceptable but noticeably imperfect;
+- `4-5` - weak or risky;
+- `1-3` - severe problems;
+- `0` - absent, contradicted, or unusable.
+
 `input_profile_code` / `input_profile_name` describe the source-input profile for the case. Use these for the five input-set types from the criteria documents, for example:
 
 - `complete_technical_docs`
@@ -72,7 +81,7 @@ Minimal shape:
       "requirement_id": "req_fast_processing",
       "criterion": "correctness",
       "original_assessment_id": "rqa_req002_correctness",
-      "reviewer_score": 2,
+      "reviewer_score": 4,
       "reviewer_label": "likely_not_assessable",
       "agreement_status": "disagree",
       "reviewer_comment": "Why the reviewer disagrees.",

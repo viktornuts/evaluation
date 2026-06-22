@@ -61,7 +61,7 @@
             {
               "id": "rqa_req001_source_quality",
               "criterion": "source_quality",
-              "score": 5,
+              "score": 10,
               "label": "primary_source",
               "rationale": "Требование взято из явного фрагмента спецификации.",
               "assessed_by": "example",
@@ -70,7 +70,7 @@
             {
               "id": "rqa_req001_completeness",
               "criterion": "completeness",
-              "score": 5,
+              "score": 10,
               "label": "complete",
               "rationale": "Есть субъект, действие, канал и ожидаемый результат.",
               "assessed_by": "example",
@@ -79,7 +79,7 @@
             {
               "id": "rqa_req001_consistency",
               "criterion": "consistency",
-              "score": 5,
+              "score": 10,
               "label": "consistent",
               "rationale": "Противоречий не обнаружено.",
               "assessed_by": "example",
@@ -88,7 +88,7 @@
             {
               "id": "rqa_req001_correctness",
               "criterion": "correctness",
-              "score": 5,
+              "score": 10,
               "label": "correct",
               "rationale": "Формулировка соответствует типичному сценарию восстановления пароля.",
               "assessed_by": "example",
@@ -97,7 +97,7 @@
             {
               "id": "rqa_req001_unambiguity",
               "criterion": "unambiguity",
-              "score": 5,
+              "score": 10,
               "label": "unambiguous",
               "rationale": "Трактовка требования однозначна.",
               "assessed_by": "example",
@@ -106,7 +106,7 @@
             {
               "id": "rqa_req001_testability",
               "criterion": "testability",
-              "score": 5,
+              "score": 10,
               "label": "testable",
               "rationale": "Можно проверить отправку ссылки на подтвержденный email.",
               "assessed_by": "example",
@@ -115,7 +115,7 @@
             {
               "id": "rqa_req001_traceability",
               "criterion": "traceability",
-              "score": 5,
+              "score": 10,
               "label": "traceable",
               "rationale": "Есть связь с конкретным фрагментом FR-1.",
               "assessed_by": "example",
@@ -124,7 +124,7 @@
             {
               "id": "rqa_req001_modifiability",
               "criterion": "modifiability",
-              "score": 5,
+              "score": 10,
               "label": "modifiable",
               "rationale": "Требование описано один раз и не дублирует другие требования в примере.",
               "assessed_by": "example",
@@ -133,7 +133,7 @@
             {
               "id": "rqa_req001_atomicity",
               "criterion": "atomicity",
-              "score": 4,
+              "score": 8,
               "label": "mostly_atomic",
               "rationale": "Требование описывает один сценарий восстановления пароля по email.",
               "assessed_by": "example",
@@ -142,7 +142,7 @@
             {
               "id": "rqa_req001_feasibility",
               "criterion": "feasibility",
-              "score": 5,
+              "score": 10,
               "label": "feasible",
               "rationale": "Сценарий технологически реализуем и не содержит технических противоречий.",
               "assessed_by": "example",
@@ -172,7 +172,7 @@
             {
               "id": "rqa_req002_source_quality",
               "criterion": "source_quality",
-              "score": 5,
+              "score": 10,
               "label": "primary_source",
               "rationale": "Требование взято из явного фрагмента спецификации.",
               "assessed_by": "example",
@@ -181,7 +181,7 @@
             {
               "id": "rqa_req002_completeness",
               "criterion": "completeness",
-              "score": 1,
+              "score": 2,
               "label": "incomplete",
               "rationale": "Не указан тип заявок, объем, SLA или ожидаемый порог скорости.",
               "assessed_by": "example",
@@ -190,7 +190,7 @@
             {
               "id": "rqa_req002_consistency",
               "criterion": "consistency",
-              "score": 3,
+              "score": 6,
               "label": "unknown",
               "rationale": "Противоречий нет, но контекста недостаточно.",
               "assessed_by": "example",
@@ -199,7 +199,7 @@
             {
               "id": "rqa_req002_correctness",
               "criterion": "correctness",
-              "score": 3,
+              "score": 6,
               "label": "unknown",
               "rationale": "Корректность нельзя подтвердить без бизнес-контекста.",
               "assessed_by": "example",
@@ -208,7 +208,7 @@
             {
               "id": "rqa_req002_unambiguity",
               "criterion": "unambiguity",
-              "score": 1,
+              "score": 2,
               "label": "ambiguous",
               "rationale": "Слово 'быстро' допускает разные трактовки.",
               "assessed_by": "example",
@@ -217,7 +217,7 @@
             {
               "id": "rqa_req002_testability",
               "criterion": "testability",
-              "score": 1,
+              "score": 2,
               "label": "not_testable",
               "rationale": "Нет измеримого ожидаемого результата.",
               "assessed_by": "example",
@@ -226,7 +226,7 @@
             {
               "id": "rqa_req002_traceability",
               "criterion": "traceability",
-              "score": 5,
+              "score": 10,
               "label": "traceable",
               "rationale": "Есть связь с конкретным фрагментом FR-2.",
               "assessed_by": "example",
@@ -235,7 +235,7 @@
             {
               "id": "rqa_req002_modifiability",
               "criterion": "modifiability",
-              "score": 3,
+              "score": 6,
               "label": "unknown",
               "rationale": "Дублирования в примере нет, но требование слишком общее для уверенной оценки связности.",
               "assessed_by": "example",
@@ -244,7 +244,7 @@
             {
               "id": "rqa_req002_atomicity",
               "criterion": "atomicity",
-              "score": 4,
+              "score": 8,
               "label": "mostly_atomic",
               "rationale": "Требование описывает одно поведение, но формулировка слишком общая.",
               "assessed_by": "example",
@@ -253,7 +253,7 @@
             {
               "id": "rqa_req002_feasibility",
               "criterion": "feasibility",
-              "score": 3,
+              "score": 6,
               "label": "unknown",
               "rationale": "Выполнимость нельзя оценить без конкретного SLA и контекста нагрузки.",
               "assessed_by": "example",

@@ -16,10 +16,10 @@
       "requirement_id": "req_fast_processing",
       "criterion": "correctness",
       "original_assessment_id": "rqa_req002_correctness",
-      "reviewer_score": 2,
+      "reviewer_score": 4,
       "reviewer_label": "likely_not_assessable",
       "agreement_status": "disagree",
-      "reviewer_comment": "Project score 3 says unknown, but I would lower it because the wording is too vague to verify correctness without a domain SLA.",
+      "reviewer_comment": "Project score 6 says unknown, but I would lower it because the wording is too vague to verify correctness without a domain SLA.",
       "severity": "minor"
     }
   ],

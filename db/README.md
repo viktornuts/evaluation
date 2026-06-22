@@ -7,17 +7,33 @@ This folder contains the local database schema for the CPT eval dataset store.
 - `schema.sql` - SQLite schema for datasets, source fragments, requirements, requirement quality assessments, test cases, traceability links, unsupported details, and future eval runs.
 - `seed.sql` - initial quality criteria used to assess input requirements.
 
+## Quality Score Scale
+
+Manual quality assessments use an integer `0..10` scale:
+
+- `10` - fully satisfies the criterion.
+- `8-9` - good, only minor issues.
+- `6-7` - acceptable but noticeably imperfect.
+- `4-5` - weak or risky.
+- `1-3` - severe problems.
+- `0` - absent, contradicted, or unusable.
+
+Reports can present this as a percentage directly: `score 8 = 80%`.
+
 ## Requirement Quality Criteria
 
-The MVP seeds seven criteria:
+The MVP seeds ten requirement criteria:
 
 - `source_quality` - source reliability and suitability.
+- `correctness` - whether the requirement is valid for the domain/system.
+- `unambiguity` - whether the wording is unambiguous.
 - `completeness` - whether the requirement has enough information for generation without guessing.
 - `consistency` - whether the requirement conflicts with itself or related sources.
-- `correctness` - whether the requirement is valid for the domain/system.
-- `ambiguity` - whether the wording is unambiguous.
 - `testability` - whether test actions and expected results can be derived.
 - `traceability` - whether the requirement can be linked to a concrete source fragment.
+- `modifiability` - whether the requirement can be changed safely without uncontrolled duplication.
+- `atomicity` - whether the requirement describes one behavior or function.
+- `feasibility` - whether the requirement is technically feasible and not contradictory.
 
 ## Core Model
 

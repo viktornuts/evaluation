@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS quality_criteria (
     code TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     description TEXT,
-    scale_min INTEGER NOT NULL DEFAULT 1,
-    scale_max INTEGER NOT NULL DEFAULT 5,
+    scale_min INTEGER NOT NULL DEFAULT 0,
+    scale_max INTEGER NOT NULL DEFAULT 10,
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS requirement_quality_assessments (
     id TEXT PRIMARY KEY,
     requirement_id TEXT NOT NULL,
     criterion_id TEXT NOT NULL,
-    score INTEGER NOT NULL CHECK (score BETWEEN 1 AND 5),
+    score INTEGER NOT NULL CHECK (score BETWEEN 0 AND 10),
     label TEXT NOT NULL,
     rationale TEXT,
     assessed_by TEXT NOT NULL DEFAULT 'unknown',
@@ -147,8 +147,8 @@ CREATE TABLE IF NOT EXISTS test_case_quality_criteria (
     code TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     description TEXT,
-    scale_min INTEGER NOT NULL DEFAULT 1,
-    scale_max INTEGER NOT NULL DEFAULT 5,
+    scale_min INTEGER NOT NULL DEFAULT 0,
+    scale_max INTEGER NOT NULL DEFAULT 10,
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS test_case_quality_assessments (
     id TEXT PRIMARY KEY,
     test_case_id TEXT NOT NULL,
     criterion_id TEXT NOT NULL,
-    score INTEGER NOT NULL CHECK (score BETWEEN 1 AND 5),
+    score INTEGER NOT NULL CHECK (score BETWEEN 0 AND 10),
     label TEXT NOT NULL,
     rationale TEXT,
     assessed_by TEXT NOT NULL DEFAULT 'unknown',
@@ -174,8 +174,8 @@ CREATE TABLE IF NOT EXISTS test_suite_quality_criteria (
     code TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     description TEXT,
-    scale_min INTEGER NOT NULL DEFAULT 1,
-    scale_max INTEGER NOT NULL DEFAULT 5,
+    scale_min INTEGER NOT NULL DEFAULT 0,
+    scale_max INTEGER NOT NULL DEFAULT 10,
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS test_suite_quality_assessments (
     dataset_case_id TEXT,
     requirement_id TEXT,
     eval_run_id TEXT,
-    score INTEGER NOT NULL CHECK (score BETWEEN 1 AND 5),
+    score INTEGER NOT NULL CHECK (score BETWEEN 0 AND 10),
     label TEXT NOT NULL,
     rationale TEXT,
     assessed_by TEXT NOT NULL DEFAULT 'unknown',
@@ -291,7 +291,7 @@ CREATE TABLE IF NOT EXISTS external_requirement_assessment_reviews (
     criterion_id TEXT NOT NULL,
     original_assessment_id TEXT,
     original_score INTEGER,
-    reviewer_score INTEGER CHECK (reviewer_score IS NULL OR reviewer_score BETWEEN 1 AND 5),
+    reviewer_score INTEGER CHECK (reviewer_score IS NULL OR reviewer_score BETWEEN 0 AND 10),
     reviewer_label TEXT,
     agreement_status TEXT NOT NULL,
     reviewer_comment TEXT,
