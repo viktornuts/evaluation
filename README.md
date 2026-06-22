@@ -93,12 +93,17 @@ db/
   seed.sql
 data/
   cpt_eval.sqlite
-docs/
-  project-context.md
-  glossary.md
-  implementation-plan.md
-  source-documents-notes.md
-  source-documents-md/
+Документация/
+  Доки по проекту + критерии/
+    project-context.md
+    glossary.md
+    implementation-plan.md
+    criteria-intake-notes.md
+    source-documents-notes.md
+    source-documents/
+    source-documents-md/
+  Датасеты/
+    cpt_smoke_v1/
 imports/
   README.md
   example_dataset_case.json
@@ -112,11 +117,9 @@ scripts/
   export_review_pack.py
   import_external_review.py
   report_external_review.py
-source-documents/
-  original PDF/DOCX source documents
 ```
 
 ## Source Documents
 
-Original strategy notes, PDFs, product specs, and related materials live in `source-documents/`.
-Fast Markdown copies for reading and search live in `docs/source-documents-md/`.
+Project documents, criteria, original PDFs/DOCX files, and Markdown reading copies live in `Документация/Доки по проекту + критерии/`.
+Dataset-specific materials, requirements, criteria assessments, and test cases live in `Документация/Датасеты/`.

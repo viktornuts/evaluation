@@ -2,7 +2,7 @@
 
 This folder contains mechanically extracted Markdown copies of the original PDF/DOCX documents. Use them for fast reading, search, and context recovery in future sessions.
 
-Original files in `source-documents/` remain the source of truth, especially when tables, visual layout, or document structure matter.
+Original files in `../source-documents/` remain the source of truth, especially when tables, visual layout, or document structure matter.
 
 ## Files
 

@@ -1,6 +1,6 @@
 # Целевые критерии качества работы ЦПТ
 
-Source: `source-documents/Целевые_критерии_качества_работы_ЦПТ.docx`
+Source: `../source-documents/Целевые_критерии_качества_работы_ЦПТ.docx`
 
 > Mechanical Markdown copy for fast reading and search. The original DOCX remains the source of truth for tables and document structure.
 

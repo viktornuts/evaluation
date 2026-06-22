@@ -1,6 +1,6 @@
 # Содержание
 
-Source: `source-documents/sfera-eval-strategy.pdf`
+Source: `../source-documents/sfera-eval-strategy.pdf`
 
 > Mechanical Markdown copy for fast reading and search. The original PDF remains the source of truth for visual layout.
 

@@ -1,6 +1,6 @@
 # 2026-06-19 Eval-процесс разработки ЦПТ
 
-Source: `source-documents/2026-06-19 Eval-процесс разработки ЦПТ.pdf`
+Source: `../source-documents/2026-06-19 Eval-процесс разработки ЦПТ.pdf`
 
 > Mechanical Markdown copy for fast reading and search. The original PDF remains the source of truth for visual layout.
 
