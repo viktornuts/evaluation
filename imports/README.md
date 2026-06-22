@@ -18,6 +18,8 @@ The current MVP importer accepts one JSON file with this shape:
       "id": "case_password_recovery",
       "case_code": "CASE-001",
       "title": "Password recovery requirements",
+      "input_profile_code": "complete_technical_docs",
+      "input_profile_name": "Structured and complete technical documentation",
       "source_materials": [],
       "requirements": [],
       "test_cases": [],
@@ -31,8 +33,16 @@ The current MVP importer accepts one JSON file with this shape:
 Each expected requirement should have:
 
 - source links to one or more `source_fragments`;
-- seven quality assessments: `source_quality`, `completeness`, `consistency`, `correctness`, `ambiguity`, `testability`, `traceability`;
+- ten quality assessments: `source_quality`, `correctness`, `unambiguity`, `completeness`, `consistency`, `testability`, `traceability`, `modifiability`, `atomicity`, `feasibility`;
 - an `expected_status`, for example `ready_for_generation` or `insufficient_detail`.
+
+`input_profile_code` / `input_profile_name` describe the source-input profile for the case. Use these for the five input-set types from the criteria documents, for example:
+
+- `complete_technical_docs`
+- `incomplete_fragmented_docs`
+- `business_user_story_docs`
+- `conflicting_noisy_docs`
+- `abstract_high_level_docs`
 
 Each expected test case should be linked to requirements through `requirement_test_case_links`.
 For better traceability, each step should also either link to requirements or be marked through `unsupported_details`.

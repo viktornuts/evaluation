@@ -49,14 +49,22 @@ def upsert_dataset(connection: sqlite3.Connection, dataset: dict[str, Any]) -> N
 def upsert_case(connection: sqlite3.Connection, dataset_id: str, case: dict[str, Any]) -> None:
     connection.execute(
         """
-        INSERT INTO dataset_cases (id, dataset_id, case_code, title, description, case_type)
-        VALUES (:id, :dataset_id, :case_code, :title, :description, :case_type)
+        INSERT INTO dataset_cases (
+            id, dataset_id, case_code, title, description, case_type,
+            input_profile_code, input_profile_name
+        )
+        VALUES (
+            :id, :dataset_id, :case_code, :title, :description, :case_type,
+            :input_profile_code, :input_profile_name
+        )
         ON CONFLICT(id) DO UPDATE SET
             dataset_id = excluded.dataset_id,
             case_code = excluded.case_code,
             title = excluded.title,
             description = excluded.description,
-            case_type = excluded.case_type
+            case_type = excluded.case_type,
+            input_profile_code = excluded.input_profile_code,
+            input_profile_name = excluded.input_profile_name
         """,
         {
             "id": case["id"],
@@ -65,6 +73,8 @@ def upsert_case(connection: sqlite3.Connection, dataset_id: str, case: dict[str,
             "title": case["title"],
             "description": case.get("description"),
             "case_type": case.get("case_type", "manual"),
+            "input_profile_code": case.get("input_profile_code"),
+            "input_profile_name": case.get("input_profile_name"),
         },
     )
 

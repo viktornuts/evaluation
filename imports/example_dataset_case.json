@@ -13,6 +13,8 @@
       "title": "Password recovery requirements",
       "description": "Example case with one complete requirement and one intentionally incomplete requirement.",
       "case_type": "smoke",
+      "input_profile_code": "mixed_example",
+      "input_profile_name": "Example with complete and incomplete requirements",
       "source_materials": [
         {
           "id": "src_password_spec",
@@ -93,8 +95,8 @@
               "assessment_method": "human"
             },
             {
-              "id": "rqa_req001_ambiguity",
-              "criterion": "ambiguity",
+              "id": "rqa_req001_unambiguity",
+              "criterion": "unambiguity",
               "score": 5,
               "label": "unambiguous",
               "rationale": "Трактовка требования однозначна.",
@@ -116,6 +118,33 @@
               "score": 5,
               "label": "traceable",
               "rationale": "Есть связь с конкретным фрагментом FR-1.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_modifiability",
+              "criterion": "modifiability",
+              "score": 5,
+              "label": "modifiable",
+              "rationale": "Требование описано один раз и не дублирует другие требования в примере.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_atomicity",
+              "criterion": "atomicity",
+              "score": 4,
+              "label": "mostly_atomic",
+              "rationale": "Требование описывает один сценарий восстановления пароля по email.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req001_feasibility",
+              "criterion": "feasibility",
+              "score": 5,
+              "label": "feasible",
+              "rationale": "Сценарий технологически реализуем и не содержит технических противоречий.",
               "assessed_by": "example",
               "assessment_method": "human"
             }
@@ -177,8 +206,8 @@
               "assessment_method": "human"
             },
             {
-              "id": "rqa_req002_ambiguity",
-              "criterion": "ambiguity",
+              "id": "rqa_req002_unambiguity",
+              "criterion": "unambiguity",
               "score": 1,
               "label": "ambiguous",
               "rationale": "Слово 'быстро' допускает разные трактовки.",
@@ -200,6 +229,33 @@
               "score": 5,
               "label": "traceable",
               "rationale": "Есть связь с конкретным фрагментом FR-2.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_modifiability",
+              "criterion": "modifiability",
+              "score": 3,
+              "label": "unknown",
+              "rationale": "Дублирования в примере нет, но требование слишком общее для уверенной оценки связности.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_atomicity",
+              "criterion": "atomicity",
+              "score": 4,
+              "label": "mostly_atomic",
+              "rationale": "Требование описывает одно поведение, но формулировка слишком общая.",
+              "assessed_by": "example",
+              "assessment_method": "human"
+            },
+            {
+              "id": "rqa_req002_feasibility",
+              "criterion": "feasibility",
+              "score": 3,
+              "label": "unknown",
+              "rationale": "Выполнимость нельзя оценить без конкретного SLA и контекста нагрузки.",
               "assessed_by": "example",
               "assessment_method": "human"
             }

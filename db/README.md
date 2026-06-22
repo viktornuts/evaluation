@@ -24,6 +24,7 @@ The MVP seeds seven criteria:
 ```text
 datasets
   -> dataset_cases
+    -> input_profile_code / input_profile_name
     -> source_materials
       -> source_fragments
     -> requirements
@@ -45,6 +46,8 @@ datasets
 External reviews never overwrite the primary human/project assessments. They store an independent second opinion and disagreement comments.
 
 `test_cases` stores the test case artifact itself. `test_case_evaluation_results` stores the result of checking a generated test case against the expected dataset, including match, structure, classification, hallucination, unsupported detail count, score, and rationale.
+
+`dataset_cases.input_profile_code` and `dataset_cases.input_profile_name` store the input-set profile from the criteria documents, for example full technical documentation, incomplete documentation, business-oriented documentation, noisy/conflicting documentation, or abstract documentation. This is intentionally a simple column, not a separate criteria table.
 
 `test_case_quality_criteria` and `test_case_quality_assessments` describe the quality of an individual test case.
 

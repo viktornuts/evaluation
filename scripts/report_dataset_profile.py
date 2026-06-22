@@ -42,6 +42,19 @@ def report(db_path: Path) -> None:
         ).fetchall()
         print_rows("Dataset overview", overview)
 
+        input_profiles = connection.execute(
+            """
+            SELECT
+                COALESCE(input_profile_code, 'not_set') AS input_profile_code,
+                COALESCE(input_profile_name, 'not_set') AS input_profile_name,
+                COUNT(*) AS cases
+            FROM dataset_cases
+            GROUP BY COALESCE(input_profile_code, 'not_set'), COALESCE(input_profile_name, 'not_set')
+            ORDER BY cases DESC, input_profile_code
+            """
+        ).fetchall()
+        print_rows("Dataset case input profiles", input_profiles)
+
         statuses = connection.execute(
             """
             SELECT expected_status, COUNT(*) AS count

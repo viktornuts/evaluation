@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS dataset_cases (
     title TEXT NOT NULL,
     description TEXT,
     case_type TEXT NOT NULL DEFAULT 'manual',
+    input_profile_code TEXT,
+    input_profile_name TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (dataset_id) REFERENCES datasets(id) ON DELETE CASCADE,
     UNIQUE (dataset_id, case_code)
