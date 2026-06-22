@@ -75,6 +75,8 @@ External reviews never overwrite the primary human/project assessments. They sto
 
 `test_case_quality_criteria` and `test_case_quality_assessments` describe the quality of an individual test case.
 
+`test_case_quality_criterion_score_levels` stores the scoring rubric for individual test-case criteria on the same `0..10` scale.
+
 `test_suite_quality_criteria` and `test_suite_quality_assessments` describe the quality of a set of test cases for a scope such as a requirement, dataset case, dataset, or eval run.
 
 `test_suite_quality_criterion_score_levels` stores the scoring rubric for test-suite criteria on the same `0..10` scale.

@@ -95,7 +95,102 @@ VALUES
     ('tc_crit_direction_correctness', 'direction_correctness', 'Корректность направления', 'Насколько направление positive/negative соответствует входным данным и ожидаемому результату.', 0, 10),
     ('tc_crit_traceability_to_requirement', 'traceability_to_requirement', 'Трассируемость к требованию', 'Насколько тест-кейс и его шаги связаны с требованиями.', 0, 10),
     ('tc_crit_no_hallucinations', 'no_hallucinations', 'Отсутствие галлюцинаций', 'Насколько тест-кейс не содержит фактов, отсутствующих в требованиях и источниках.', 0, 10),
-    ('tc_crit_no_unsupported_specificity', 'no_unsupported_specificity', 'Отсутствие неподтвержденной конкретизации', 'Насколько тест-кейс избегает неподтвержденных UI-элементов, endpoint, кодов, ролей и иных деталей.', 0, 10);
+    ('tc_crit_no_unsupported_specificity', 'no_unsupported_specificity', 'Отсутствие неподтвержденной конкретизации', 'Насколько тест-кейс избегает неподтвержденных UI-элементов, endpoint, кодов, ролей и иных деталей.', 0, 10),
+    ('tc_crit_step_action_quality', 'step_action_quality', 'Качество формулировки шагов', 'Насколько шаги сформулированы как конкретные, однозначные и выполнимые действия.', 0, 10),
+    ('tc_crit_scenario_logic', 'scenario_logic', 'Логика сценария', 'Насколько последовательность шагов сохраняет проверяемую логику сценария и не нарушает смысл требования.', 0, 10);
+
+INSERT OR IGNORE INTO test_case_quality_criterion_score_levels (id, criterion_id, score_min, score_max, label, description)
+VALUES
+    ('tc_qsl_template_10', 'tc_crit_template_compliance', 10, 10, 'template_compliant', 'ТК полностью соответствует утвержденному шаблону и ожидаемой структуре для своего вида.'),
+    ('tc_qsl_template_8_9', 'tc_crit_template_compliance', 8, 9, 'mostly_template_compliant', 'Шаблон в целом соблюден, есть minor-отклонения без влияния на читаемость и проверяемость.'),
+    ('tc_qsl_template_6_7', 'tc_crit_template_compliance', 6, 7, 'partly_template_compliant', 'Основная структура есть, но часть блоков или формат заполнены нестабильно.'),
+    ('tc_qsl_template_4_5', 'tc_crit_template_compliance', 4, 5, 'weak_template_compliance', 'Шаблон соблюден частично, структура мешает использовать ТК без доработки.'),
+    ('tc_qsl_template_1_3', 'tc_crit_template_compliance', 1, 3, 'poor_template_compliance', 'ТК почти не соответствует шаблону.'),
+    ('tc_qsl_template_0', 'tc_crit_template_compliance', 0, 0, 'no_template', 'Шаблон отсутствует или ТК невозможно распознать как тест-кейс.'),
+
+    ('tc_qsl_required_fields_10', 'tc_crit_required_fields_completeness', 10, 10, 'required_fields_complete', 'Все обязательные атрибуты ТК заполнены корректно.'),
+    ('tc_qsl_required_fields_8_9', 'tc_crit_required_fields_completeness', 8, 9, 'required_fields_mostly_complete', 'Обязательные поля почти все заполнены, есть minor-замечания.'),
+    ('tc_qsl_required_fields_6_7', 'tc_crit_required_fields_completeness', 6, 7, 'required_fields_partial', 'Часть обязательных полей заполнена неполно или неоднозначно.'),
+    ('tc_qsl_required_fields_4_5', 'tc_crit_required_fields_completeness', 4, 5, 'required_fields_weak', 'Существенная часть обязательных полей отсутствует или заполнена плохо.'),
+    ('tc_qsl_required_fields_1_3', 'tc_crit_required_fields_completeness', 1, 3, 'required_fields_poor', 'Заполнены единичные обязательные поля.'),
+    ('tc_qsl_required_fields_0', 'tc_crit_required_fields_completeness', 0, 0, 'required_fields_missing', 'Обязательные атрибуты отсутствуют.'),
+
+    ('tc_qsl_step_atomicity_10', 'tc_crit_step_atomicity', 10, 10, 'atomic_steps', 'Каждый шаг содержит одно действие или одну проверяемую операцию.'),
+    ('tc_qsl_step_atomicity_8_9', 'tc_crit_step_atomicity', 8, 9, 'mostly_atomic_steps', 'Шаги почти атомарны, есть единичные minor-склейки.'),
+    ('tc_qsl_step_atomicity_6_7', 'tc_crit_step_atomicity', 6, 7, 'partly_atomic_steps', 'Часть шагов смешивает несколько действий, но сценарий остается понятным.'),
+    ('tc_qsl_step_atomicity_4_5', 'tc_crit_step_atomicity', 4, 5, 'non_atomic_steps', 'Много шагов объединяют разные действия или проверки.'),
+    ('tc_qsl_step_atomicity_1_3', 'tc_crit_step_atomicity', 1, 3, 'strongly_non_atomic_steps', 'Шаги в основном неатомарны и требуют переразбиения.'),
+    ('tc_qsl_step_atomicity_0', 'tc_crit_step_atomicity', 0, 0, 'no_steps', 'Шаги отсутствуют или не являются шагами тестового сценария.'),
+
+    ('tc_qsl_expected_result_10', 'tc_crit_expected_result_quality', 10, 10, 'expected_results_complete', 'У каждого шага есть конкретный, проверяемый и логически соответствующий ожидаемый результат.'),
+    ('tc_qsl_expected_result_8_9', 'tc_crit_expected_result_quality', 8, 9, 'expected_results_mostly_complete', 'Ожидаемые результаты почти все корректны, есть minor-неточности.'),
+    ('tc_qsl_expected_result_6_7', 'tc_crit_expected_result_quality', 6, 7, 'expected_results_partial', 'Часть ожидаемых результатов неполная, но основной сценарий проверяем.'),
+    ('tc_qsl_expected_result_4_5', 'tc_crit_expected_result_quality', 4, 5, 'expected_results_weak', 'Ожидаемые результаты часто общие, непроверяемые или плохо связаны с шагами.'),
+    ('tc_qsl_expected_result_1_3', 'tc_crit_expected_result_quality', 1, 3, 'expected_results_poor', 'Ожидаемые результаты почти отсутствуют или не соответствуют действиям.'),
+    ('tc_qsl_expected_result_0', 'tc_crit_expected_result_quality', 0, 0, 'expected_results_missing', 'Ожидаемые результаты отсутствуют.'),
+
+    ('tc_qsl_preconditions_10', 'tc_crit_preconditions_quality', 10, 10, 'preconditions_clear', 'Предусловия полно и корректно описывают состояние системы до начала сценария.'),
+    ('tc_qsl_preconditions_8_9', 'tc_crit_preconditions_quality', 8, 9, 'preconditions_mostly_clear', 'Предусловия в целом корректны, есть minor-пробелы.'),
+    ('tc_qsl_preconditions_6_7', 'tc_crit_preconditions_quality', 6, 7, 'preconditions_partial', 'Предусловия частично описаны, часть контекста нужно уточнить.'),
+    ('tc_qsl_preconditions_4_5', 'tc_crit_preconditions_quality', 4, 5, 'preconditions_weak', 'Предусловия неполные или плохо связаны со сценарием.'),
+    ('tc_qsl_preconditions_1_3', 'tc_crit_preconditions_quality', 1, 3, 'preconditions_poor', 'Предусловия почти потеряны или сформулированы как шаги.'),
+    ('tc_qsl_preconditions_0', 'tc_crit_preconditions_quality', 0, 0, 'preconditions_missing', 'Необходимые предусловия отсутствуют.'),
+
+    ('tc_qsl_postconditions_10', 'tc_crit_postconditions_quality', 10, 10, 'postconditions_clear', 'Постусловия корректно описывают состояние после выполнения сценария и не содержат шаги.'),
+    ('tc_qsl_postconditions_8_9', 'tc_crit_postconditions_quality', 8, 9, 'postconditions_mostly_clear', 'Постусловия в целом корректны, есть minor-замечания.'),
+    ('tc_qsl_postconditions_6_7', 'tc_crit_postconditions_quality', 6, 7, 'postconditions_partial', 'Постусловия частично полезны, но требуют уточнений.'),
+    ('tc_qsl_postconditions_4_5', 'tc_crit_postconditions_quality', 4, 5, 'postconditions_weak', 'Постусловия неполные, спорные или частично содержат действия.'),
+    ('tc_qsl_postconditions_1_3', 'tc_crit_postconditions_quality', 1, 3, 'postconditions_poor', 'Постусловия почти не описывают итоговое состояние или состоят из шагов.'),
+    ('tc_qsl_postconditions_0', 'tc_crit_postconditions_quality', 0, 0, 'postconditions_invalid', 'Постусловия отсутствуют там, где нужны, или полностью некорректны.'),
+
+    ('tc_qsl_classification_10', 'tc_crit_classification_correctness', 10, 10, 'classification_correct', 'Вид ТК полностью соответствует содержанию сценария.'),
+    ('tc_qsl_classification_8_9', 'tc_crit_classification_correctness', 8, 9, 'classification_mostly_correct', 'Вид ТК в целом корректен, есть minor-спорность.'),
+    ('tc_qsl_classification_6_7', 'tc_crit_classification_correctness', 6, 7, 'classification_partly_correct', 'Вид ТК вероятно корректен, но требует проверки.'),
+    ('tc_qsl_classification_4_5', 'tc_crit_classification_correctness', 4, 5, 'classification_doubtful', 'Вид ТК слабо соответствует сценарию.'),
+    ('tc_qsl_classification_1_3', 'tc_crit_classification_correctness', 1, 3, 'classification_wrong', 'Вид ТК скорее неверный.'),
+    ('tc_qsl_classification_0', 'tc_crit_classification_correctness', 0, 0, 'classification_invalid', 'Вид ТК отсутствует или полностью неверен.'),
+
+    ('tc_qsl_direction_10', 'tc_crit_direction_correctness', 10, 10, 'direction_correct', 'Направление positive/negative полностью соответствует входным данным и ожидаемому результату.'),
+    ('tc_qsl_direction_8_9', 'tc_crit_direction_correctness', 8, 9, 'direction_mostly_correct', 'Направление в целом корректно, есть minor-спорность.'),
+    ('tc_qsl_direction_6_7', 'tc_crit_direction_correctness', 6, 7, 'direction_partly_correct', 'Направление вероятно корректно, но часть условий спорна.'),
+    ('tc_qsl_direction_4_5', 'tc_crit_direction_correctness', 4, 5, 'direction_doubtful', 'Направление плохо соответствует сценарию.'),
+    ('tc_qsl_direction_1_3', 'tc_crit_direction_correctness', 1, 3, 'direction_wrong', 'Направление скорее неверное.'),
+    ('tc_qsl_direction_0', 'tc_crit_direction_correctness', 0, 0, 'direction_invalid', 'Направление отсутствует или полностью неверно.'),
+
+    ('tc_qsl_traceability_10', 'tc_crit_traceability_to_requirement', 10, 10, 'traceable_to_requirement', 'ТК и его шаги явно связаны с требованием или требованиями, которые проверяют.'),
+    ('tc_qsl_traceability_8_9', 'tc_crit_traceability_to_requirement', 8, 9, 'mostly_traceable_to_requirement', 'Связь с требованиями понятна, есть minor-пробелы в детализации.'),
+    ('tc_qsl_traceability_6_7', 'tc_crit_traceability_to_requirement', 6, 7, 'partly_traceable_to_requirement', 'Связь с требованиями частичная или восстановима косвенно.'),
+    ('tc_qsl_traceability_4_5', 'tc_crit_traceability_to_requirement', 4, 5, 'weak_traceability_to_requirement', 'Связь с требованиями слабая, часть шагов не обоснована.'),
+    ('tc_qsl_traceability_1_3', 'tc_crit_traceability_to_requirement', 1, 3, 'poor_traceability_to_requirement', 'ТК почти не трассируется к проверяемым требованиям.'),
+    ('tc_qsl_traceability_0', 'tc_crit_traceability_to_requirement', 0, 0, 'not_traceable_to_requirement', 'Связь с требованиями отсутствует.'),
+
+    ('tc_qsl_no_hallucinations_10', 'tc_crit_no_hallucinations', 10, 10, 'no_hallucinations', 'ТК не содержит фактов, отсутствующих в требованиях и источниках.'),
+    ('tc_qsl_no_hallucinations_8_9', 'tc_crit_no_hallucinations', 8, 9, 'minor_unsupported_fact_risk', 'Есть minor-детали с низким риском неподтвержденности.'),
+    ('tc_qsl_no_hallucinations_6_7', 'tc_crit_no_hallucinations', 6, 7, 'some_unsupported_facts', 'Есть отдельные неподтвержденные факты, требуется ревью.'),
+    ('tc_qsl_no_hallucinations_4_5', 'tc_crit_no_hallucinations', 4, 5, 'many_unsupported_facts', 'Неподтвержденные факты заметно влияют на корректность ТК.'),
+    ('tc_qsl_no_hallucinations_1_3', 'tc_crit_no_hallucinations', 1, 3, 'hallucinated_test_case', 'ТК в основном построен на выдуманных фактах.'),
+    ('tc_qsl_no_hallucinations_0', 'tc_crit_no_hallucinations', 0, 0, 'invalid_hallucinated_test_case', 'ТК непригоден из-за галлюцинаций.'),
+
+    ('tc_qsl_no_unsupported_specificity_10', 'tc_crit_no_unsupported_specificity', 10, 10, 'no_unsupported_specificity', 'ТК не добавляет неподтвержденные UI-элементы, endpoint, роли, коды или тексты ошибок.'),
+    ('tc_qsl_no_unsupported_specificity_8_9', 'tc_crit_no_unsupported_specificity', 8, 9, 'minor_specificity_risk', 'Есть minor-конкретизация, которая почти однозначно следует из контекста.'),
+    ('tc_qsl_no_unsupported_specificity_6_7', 'tc_crit_no_unsupported_specificity', 6, 7, 'some_unsupported_specificity', 'Есть отдельные неподтвержденные конкретные детали.'),
+    ('tc_qsl_no_unsupported_specificity_4_5', 'tc_crit_no_unsupported_specificity', 4, 5, 'many_unsupported_specificity', 'Неподтвержденная конкретизация заметно влияет на проверку.'),
+    ('tc_qsl_no_unsupported_specificity_1_3', 'tc_crit_no_unsupported_specificity', 1, 3, 'mostly_unsupported_specificity', 'ТК в основном содержит неподтвержденные детали.'),
+    ('tc_qsl_no_unsupported_specificity_0', 'tc_crit_no_unsupported_specificity', 0, 0, 'invalid_unsupported_specificity', 'ТК непригоден из-за неподтвержденной конкретизации.'),
+
+    ('tc_qsl_step_action_quality_10', 'tc_crit_step_action_quality', 10, 10, 'clear_executable_steps', 'Шаги сформулированы как конкретные, однозначные и выполнимые действия.'),
+    ('tc_qsl_step_action_quality_8_9', 'tc_crit_step_action_quality', 8, 9, 'mostly_clear_executable_steps', 'Шаги в целом конкретны и выполнимы, есть minor-неточности.'),
+    ('tc_qsl_step_action_quality_6_7', 'tc_crit_step_action_quality', 6, 7, 'partly_clear_steps', 'Часть шагов конкретна, часть требует уточнения.'),
+    ('tc_qsl_step_action_quality_4_5', 'tc_crit_step_action_quality', 4, 5, 'weak_step_actions', 'Шаги часто общие, неоднозначные или плохо выполнимые.'),
+    ('tc_qsl_step_action_quality_1_3', 'tc_crit_step_action_quality', 1, 3, 'poor_step_actions', 'Шаги почти невозможно выполнить без домысливания.'),
+    ('tc_qsl_step_action_quality_0', 'tc_crit_step_action_quality', 0, 0, 'invalid_step_actions', 'Шаги отсутствуют или не являются действиями.'),
+
+    ('tc_qsl_scenario_logic_10', 'tc_crit_scenario_logic', 10, 10, 'logical_scenario', 'Последовательность шагов сохраняет корректную логику сценария и проверяемое требование.'),
+    ('tc_qsl_scenario_logic_8_9', 'tc_crit_scenario_logic', 8, 9, 'mostly_logical_scenario', 'Логика сценария в целом корректна, есть minor-неточности.'),
+    ('tc_qsl_scenario_logic_6_7', 'tc_crit_scenario_logic', 6, 7, 'partly_logical_scenario', 'Основная логика понятна, но есть спорные переходы или пропуски.'),
+    ('tc_qsl_scenario_logic_4_5', 'tc_crit_scenario_logic', 4, 5, 'weak_scenario_logic', 'Логика сценария часто нарушается или требует существенной доработки.'),
+    ('tc_qsl_scenario_logic_1_3', 'tc_crit_scenario_logic', 1, 3, 'poor_scenario_logic', 'Сценарий почти нелогичен и плохо проверяет требование.'),
+    ('tc_qsl_scenario_logic_0', 'tc_crit_scenario_logic', 0, 0, 'invalid_scenario_logic', 'Сценарий отсутствует или полностью некорректен.');
 
 INSERT OR IGNORE INTO test_suite_quality_criteria (id, code, name, description, scale_min, scale_max)
 VALUES
