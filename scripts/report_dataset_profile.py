@@ -113,6 +113,37 @@ def report(db_path: Path) -> None:
         ).fetchall()
         print_rows("Test case evaluation results", test_case_evaluation)
 
+        test_case_quality = connection.execute(
+            """
+            SELECT
+                tcqc.code AS criterion,
+                tcqa.label,
+                COUNT(*) AS count,
+                ROUND(AVG(tcqa.score), 2) AS avg_score
+            FROM test_case_quality_assessments tcqa
+            JOIN test_case_quality_criteria tcqc ON tcqc.id = tcqa.criterion_id
+            GROUP BY tcqc.code, tcqa.label
+            ORDER BY tcqc.code, count DESC, tcqa.label
+            """
+        ).fetchall()
+        print_rows("Test case quality assessments", test_case_quality)
+
+        test_suite_quality = connection.execute(
+            """
+            SELECT
+                tsqa.scope_type,
+                tsqc.code AS criterion,
+                tsqa.label,
+                COUNT(*) AS count,
+                ROUND(AVG(tsqa.score), 2) AS avg_score
+            FROM test_suite_quality_assessments tsqa
+            JOIN test_suite_quality_criteria tsqc ON tsqc.id = tsqa.criterion_id
+            GROUP BY tsqa.scope_type, tsqc.code, tsqa.label
+            ORDER BY tsqa.scope_type, tsqc.code, count DESC, tsqa.label
+            """
+        ).fetchall()
+        print_rows("Test suite quality assessments", test_suite_quality)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Print a profile report for the CPT eval dataset.")

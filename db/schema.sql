@@ -140,6 +140,66 @@ CREATE TABLE IF NOT EXISTS test_case_steps (
     UNIQUE (test_case_id, step_number)
 );
 
+CREATE TABLE IF NOT EXISTS test_case_quality_criteria (
+    id TEXT PRIMARY KEY,
+    code TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT,
+    scale_min INTEGER NOT NULL DEFAULT 1,
+    scale_max INTEGER NOT NULL DEFAULT 5,
+    is_active INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS test_case_quality_assessments (
+    id TEXT PRIMARY KEY,
+    test_case_id TEXT NOT NULL,
+    criterion_id TEXT NOT NULL,
+    score INTEGER NOT NULL CHECK (score BETWEEN 1 AND 5),
+    label TEXT NOT NULL,
+    rationale TEXT,
+    assessed_by TEXT NOT NULL DEFAULT 'unknown',
+    assessment_method TEXT NOT NULL DEFAULT 'human',
+    confidence REAL CHECK (confidence IS NULL OR (confidence >= 0 AND confidence <= 1)),
+    eval_run_id TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (test_case_id) REFERENCES test_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (criterion_id) REFERENCES test_case_quality_criteria(id) ON DELETE RESTRICT,
+    FOREIGN KEY (eval_run_id) REFERENCES eval_runs(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS test_suite_quality_criteria (
+    id TEXT PRIMARY KEY,
+    code TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT,
+    scale_min INTEGER NOT NULL DEFAULT 1,
+    scale_max INTEGER NOT NULL DEFAULT 5,
+    is_active INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS test_suite_quality_assessments (
+    id TEXT PRIMARY KEY,
+    criterion_id TEXT NOT NULL,
+    scope_type TEXT NOT NULL,
+    scope_id TEXT NOT NULL,
+    dataset_id TEXT,
+    dataset_case_id TEXT,
+    requirement_id TEXT,
+    eval_run_id TEXT,
+    score INTEGER NOT NULL CHECK (score BETWEEN 1 AND 5),
+    label TEXT NOT NULL,
+    rationale TEXT,
+    assessed_by TEXT NOT NULL DEFAULT 'unknown',
+    assessment_method TEXT NOT NULL DEFAULT 'human',
+    confidence REAL CHECK (confidence IS NULL OR (confidence >= 0 AND confidence <= 1)),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (criterion_id) REFERENCES test_suite_quality_criteria(id) ON DELETE RESTRICT,
+    FOREIGN KEY (dataset_id) REFERENCES datasets(id) ON DELETE CASCADE,
+    FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (requirement_id) REFERENCES requirements(id) ON DELETE CASCADE,
+    FOREIGN KEY (eval_run_id) REFERENCES eval_runs(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS requirement_test_case_links (
     id TEXT PRIMARY KEY,
     requirement_id TEXT NOT NULL,
@@ -264,6 +324,12 @@ CREATE INDEX IF NOT EXISTS idx_requirement_source_req_id ON requirement_source_l
 CREATE INDEX IF NOT EXISTS idx_requirement_quality_req_id ON requirement_quality_assessments(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_test_cases_case_id ON test_cases(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_test_steps_tc_id ON test_case_steps(test_case_id);
+CREATE INDEX IF NOT EXISTS idx_tc_quality_assessments_tc_id ON test_case_quality_assessments(test_case_id);
+CREATE INDEX IF NOT EXISTS idx_tc_quality_assessments_criterion_id ON test_case_quality_assessments(criterion_id);
+CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_scope ON test_suite_quality_assessments(scope_type, scope_id);
+CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_case_id ON test_suite_quality_assessments(dataset_case_id);
+CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_requirement_id ON test_suite_quality_assessments(requirement_id);
+CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_run_id ON test_suite_quality_assessments(eval_run_id);
 CREATE INDEX IF NOT EXISTS idx_req_tc_req_id ON requirement_test_case_links(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_tc_tc_id ON requirement_test_case_links(test_case_id);
 CREATE INDEX IF NOT EXISTS idx_step_req_step_id ON test_case_step_requirement_links(test_case_step_id);

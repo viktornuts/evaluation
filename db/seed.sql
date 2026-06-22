@@ -7,3 +7,30 @@ VALUES
     ('crit_ambiguity', 'ambiguity', 'Недвусмысленность', 'Насколько формулировка однозначна и не допускает нескольких несовместимых трактовок.', 1, 5),
     ('crit_testability', 'testability', 'Проверяемость', 'Можно ли по требованию построить проверяемые действия и ожидаемые результаты.', 1, 5),
     ('crit_traceability', 'traceability', 'Трассируемость', 'Можно ли связать требование с конкретным источником и фрагментом источника.', 1, 5);
+
+INSERT OR IGNORE INTO test_case_quality_criteria (id, code, name, description, scale_min, scale_max)
+VALUES
+    ('tc_crit_template_compliance', 'template_compliance', 'Соответствие шаблону', 'Насколько тест-кейс соответствует утвержденному шаблону и ожидаемой структуре.', 1, 5),
+    ('tc_crit_required_fields_completeness', 'required_fields_completeness', 'Полнота обязательных полей', 'Насколько заполнены обязательные атрибуты тест-кейса.', 1, 5),
+    ('tc_crit_step_atomicity', 'step_atomicity', 'Атомарность шагов', 'Насколько каждый шаг содержит одно действие и не смешивает несколько проверок.', 1, 5),
+    ('tc_crit_expected_result_quality', 'expected_result_quality', 'Качество ожидаемых результатов', 'Насколько ожидаемые результаты конкретны, проверяемы и соответствуют действиям.', 1, 5),
+    ('tc_crit_preconditions_quality', 'preconditions_quality', 'Качество предусловий', 'Насколько предусловия описывают состояние системы до начала сценария.', 1, 5),
+    ('tc_crit_postconditions_quality', 'postconditions_quality', 'Качество постусловий', 'Насколько постусловия описывают состояние после выполнения сценария и не содержат шаги.', 1, 5),
+    ('tc_crit_classification_correctness', 'classification_correctness', 'Корректность вида ТК', 'Насколько вид тест-кейса соответствует содержанию сценария.', 1, 5),
+    ('tc_crit_direction_correctness', 'direction_correctness', 'Корректность направления', 'Насколько направление positive/negative соответствует входным данным и ожидаемому результату.', 1, 5),
+    ('tc_crit_traceability_to_requirement', 'traceability_to_requirement', 'Трассируемость к требованию', 'Насколько тест-кейс и его шаги связаны с требованиями.', 1, 5),
+    ('tc_crit_no_hallucinations', 'no_hallucinations', 'Отсутствие галлюцинаций', 'Насколько тест-кейс не содержит фактов, отсутствующих в требованиях и источниках.', 1, 5),
+    ('tc_crit_no_unsupported_specificity', 'no_unsupported_specificity', 'Отсутствие неподтвержденной конкретизации', 'Насколько тест-кейс избегает неподтвержденных UI-элементов, endpoint, кодов, ролей и иных деталей.', 1, 5);
+
+INSERT OR IGNORE INTO test_suite_quality_criteria (id, code, name, description, scale_min, scale_max)
+VALUES
+    ('suite_crit_requirement_coverage', 'requirement_coverage', 'Покрытие требований', 'Насколько набор тест-кейсов покрывает пригодные требования.', 1, 5),
+    ('suite_crit_positive_coverage', 'positive_coverage', 'Позитивное покрытие', 'Насколько набор содержит необходимые позитивные сценарии.', 1, 5),
+    ('suite_crit_negative_coverage', 'negative_coverage', 'Негативное покрытие', 'Насколько набор содержит необходимые негативные сценарии.', 1, 5),
+    ('suite_crit_required_checks_coverage', 'required_checks_coverage', 'Покрытие обязательных проверок', 'Насколько набор покрывает обязательные проверки из эталона.', 1, 5),
+    ('suite_crit_duplicate_rate', 'duplicate_rate', 'Уровень дублей', 'Насколько набор свободен от дублирующих тест-кейсов.', 1, 5),
+    ('suite_crit_extra_relevant_test_case_rate', 'extra_relevant_test_case_rate', 'Релевантность дополнительных ТК', 'Насколько дополнительные тест-кейсы релевантны и не искажают требования.', 1, 5),
+    ('suite_crit_irrelevant_test_case_rate', 'irrelevant_test_case_rate', 'Отсутствие нерелевантных ТК', 'Насколько набор свободен от тест-кейсов, не связанных с требованиями.', 1, 5),
+    ('suite_crit_coverage_balance', 'coverage_balance', 'Сбалансированность покрытия', 'Насколько покрытие распределено по требованиям без перекоса в один участок.', 1, 5),
+    ('suite_crit_overall_completeness', 'overall_completeness', 'Общая полнота набора', 'Насколько набор тест-кейсов достаточен для проверяемого скоупа.', 1, 5),
+    ('suite_crit_no_suite_level_hallucinations', 'no_suite_level_hallucinations', 'Отсутствие галлюцинаций на уровне набора', 'Насколько весь набор не добавляет неподтвержденные сущности, сценарии и детали.', 1, 5);
