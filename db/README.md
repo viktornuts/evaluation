@@ -67,7 +67,7 @@ datasets
 
 External reviews never overwrite the primary human/project assessments. They store an independent second opinion and disagreement comments.
 
-`eval_runs` stores an agent run against a dataset. It fixes the agent name/version/build, model provider/name/version, prompt name/version/text snapshot, generation settings such as `temperature` and `top_p`, and JSON fields for additional agent or run configuration. Generated requirements, generated test cases, suite assessments, and evaluation results can link back to the exact run through `eval_run_id`.
+`eval_runs` stores an agent run against a dataset. It fixes the agent name/version/build, model provider/name/version, prompt name/version/text snapshot, generation settings such as `temperature` and `top_p`, and JSON fields for additional agent or run configuration. Generated requirements, generated test cases, suite assessments, and evaluation results can link back to the exact run through `eval_run_id`. `prompt_snapshot`, `model_name`, `model_version`, `temperature`, and `top_p` are required for every run because the result is not reproducible without them.
 
 `test_cases` stores the test case artifact itself. `test_case_evaluation_results` stores the result of checking a generated test case against the expected dataset, including match, structure, classification, hallucination, unsupported detail count, score, and rationale.
 
