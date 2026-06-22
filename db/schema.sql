@@ -355,3 +355,38 @@ CREATE INDEX IF NOT EXISTS idx_external_reviews_dataset_id ON external_reviews(d
 CREATE INDEX IF NOT EXISTS idx_external_req_reviews_review_id ON external_requirement_assessment_reviews(external_review_id);
 CREATE INDEX IF NOT EXISTS idx_external_req_reviews_requirement_id ON external_requirement_assessment_reviews(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_external_tc_reviews_review_id ON external_test_case_reviews(external_review_id);
+
+CREATE VIEW IF NOT EXISTS requirement_source_summary AS
+SELECT
+    d.id AS dataset_id,
+    d.name AS dataset_name,
+    d.version AS dataset_version,
+    dc.id AS dataset_case_id,
+    dc.case_code,
+    r.id AS requirement_id,
+    r.requirement_code,
+    r.origin,
+    COUNT(DISTINCT rsl.source_fragment_id) AS source_fragment_count,
+    COUNT(DISTINCT sf.source_material_id) AS source_material_count
+FROM requirements r
+JOIN dataset_cases dc ON dc.id = r.dataset_case_id
+JOIN datasets d ON d.id = dc.dataset_id
+LEFT JOIN requirement_source_links rsl ON rsl.requirement_id = r.id
+LEFT JOIN source_fragments sf ON sf.id = rsl.source_fragment_id
+GROUP BY d.id, dc.id, r.id;
+
+CREATE VIEW IF NOT EXISTS dataset_case_requirement_source_profile AS
+SELECT
+    dataset_id,
+    dataset_name,
+    dataset_version,
+    dataset_case_id,
+    case_code,
+    COUNT(*) AS requirement_count,
+    ROUND(AVG(source_material_count), 2) AS avg_source_materials_per_requirement,
+    MAX(source_material_count) AS max_source_materials_per_requirement,
+    SUM(CASE WHEN source_material_count = 0 THEN 1 ELSE 0 END) AS no_source_requirements,
+    SUM(CASE WHEN source_material_count = 1 THEN 1 ELSE 0 END) AS single_source_requirements,
+    SUM(CASE WHEN source_material_count > 1 THEN 1 ELSE 0 END) AS multi_source_requirements
+FROM requirement_source_summary
+GROUP BY dataset_id, dataset_case_id;

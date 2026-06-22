@@ -69,6 +69,10 @@ External reviews never overwrite the primary human/project assessments. They sto
 
 `dataset_cases.input_profile_code` and `dataset_cases.input_profile_name` store the input-set profile from the criteria documents, for example full technical documentation, incomplete documentation, business-oriented documentation, noisy/conflicting documentation, or abstract documentation. This is intentionally a simple column, not a separate criteria table.
 
+`requirement_source_summary` is a view that shows how many source fragments and source materials are linked to each requirement.
+
+`dataset_case_requirement_source_profile` is a view that summarizes source complexity for each dataset case: average source materials per requirement, max source materials per requirement, and counts of requirements with zero, one, or multiple sources.
+
 `test_case_quality_criteria` and `test_case_quality_assessments` describe the quality of an individual test case.
 
 `test_suite_quality_criteria` and `test_suite_quality_assessments` describe the quality of a set of test cases for a scope such as a requirement, dataset case, dataset, or eval run.

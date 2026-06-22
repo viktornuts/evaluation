@@ -77,6 +77,35 @@ def report(db_path: Path) -> None:
         ).fetchall()
         print_rows("Requirement risk levels", risk)
 
+        source_profile = connection.execute(
+            """
+            SELECT
+                case_code,
+                requirement_count,
+                avg_source_materials_per_requirement,
+                max_source_materials_per_requirement,
+                no_source_requirements,
+                single_source_requirements,
+                multi_source_requirements
+            FROM dataset_case_requirement_source_profile
+            ORDER BY case_code
+            """
+        ).fetchall()
+        print_rows("Requirement source profile by dataset case", source_profile)
+
+        source_distribution = connection.execute(
+            """
+            SELECT
+                case_code,
+                source_material_count,
+                COUNT(*) AS requirements
+            FROM requirement_source_summary
+            GROUP BY case_code, source_material_count
+            ORDER BY case_code, source_material_count
+            """
+        ).fetchall()
+        print_rows("Requirement source count distribution", source_distribution)
+
         quality = connection.execute(
             """
             SELECT qc.code AS criterion, rqa.label, COUNT(*) AS count, ROUND(AVG(rqa.score), 2) AS avg_score
