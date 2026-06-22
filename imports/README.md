@@ -36,7 +36,7 @@ Each expected requirement should have:
 - ten quality assessments: `source_quality`, `correctness`, `unambiguity`, `completeness`, `consistency`, `testability`, `traceability`, `modifiability`, `atomicity`, `feasibility`;
 - an `expected_status`, for example `ready_for_generation` or `insufficient_detail`.
 
-Quality assessment scores use a 0-10 integer scale:
+Quality assessment scores use a decimal 0-10 scale:
 
 - `10` - fully satisfies the criterion;
 - `8-9` - good, only minor issues;
@@ -44,6 +44,8 @@ Quality assessment scores use a 0-10 integer scale:
 - `4-5` - weak or risky;
 - `1-3` - severe problems;
 - `0` - absent, contradicted, or unusable.
+
+Decimal scores are allowed for more precise percentages, for example `6.7 = 67%`.
 
 `input_profile_code` / `input_profile_name` describe the source-input profile for the case. Use these for the five input-set types from the criteria documents, for example:
 

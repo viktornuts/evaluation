@@ -9,7 +9,7 @@ This folder contains the local database schema for the CPT eval dataset store.
 
 ## Quality Score Scale
 
-Manual quality assessments use an integer `0..10` scale:
+Manual quality assessments use a decimal `0..10` scale:
 
 - `10` - fully satisfies the criterion.
 - `8-9` - good, only minor issues.
@@ -19,6 +19,7 @@ Manual quality assessments use an integer `0..10` scale:
 - `0` - absent, contradicted, or unusable.
 
 Reports can present this as a percentage directly: `score 8 = 80%`.
+For precise assessments, decimal scores are allowed: `score 6.7 = 67%`.
 
 ## Requirement Quality Criteria
 
