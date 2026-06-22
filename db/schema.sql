@@ -100,6 +100,18 @@ CREATE TABLE IF NOT EXISTS quality_criteria (
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
+CREATE TABLE IF NOT EXISTS quality_criterion_score_levels (
+    id TEXT PRIMARY KEY,
+    criterion_id TEXT NOT NULL,
+    score_min INTEGER NOT NULL CHECK (score_min BETWEEN 0 AND 10),
+    score_max INTEGER NOT NULL CHECK (score_max BETWEEN 0 AND 10),
+    label TEXT NOT NULL,
+    description TEXT NOT NULL,
+    FOREIGN KEY (criterion_id) REFERENCES quality_criteria(id) ON DELETE CASCADE,
+    CHECK (score_min <= score_max),
+    UNIQUE (criterion_id, score_min, score_max)
+);
+
 CREATE TABLE IF NOT EXISTS requirement_quality_assessments (
     id TEXT PRIMARY KEY,
     requirement_id TEXT NOT NULL,
@@ -323,6 +335,7 @@ CREATE INDEX IF NOT EXISTS idx_sources_case_id ON source_materials(dataset_case_
 CREATE INDEX IF NOT EXISTS idx_fragments_source_id ON source_fragments(source_material_id);
 CREATE INDEX IF NOT EXISTS idx_requirements_case_id ON requirements(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_requirement_source_req_id ON requirement_source_links(requirement_id);
+CREATE INDEX IF NOT EXISTS idx_quality_score_levels_criterion_id ON quality_criterion_score_levels(criterion_id);
 CREATE INDEX IF NOT EXISTS idx_requirement_quality_req_id ON requirement_quality_assessments(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_test_cases_case_id ON test_cases(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_test_steps_tc_id ON test_case_steps(test_case_id);

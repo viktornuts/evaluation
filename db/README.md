@@ -5,7 +5,7 @@ This folder contains the local database schema for the CPT eval dataset store.
 ## Files
 
 - `schema.sql` - SQLite schema for datasets, source fragments, requirements, requirement quality assessments, test cases, traceability links, unsupported details, and future eval runs.
-- `seed.sql` - initial quality criteria used to assess input requirements.
+- `seed.sql` - initial quality criteria and scoring rubrics used to assess input requirements.
 
 ## Quality Score Scale
 
@@ -35,9 +35,13 @@ The MVP seeds ten requirement criteria:
 - `atomicity` - whether the requirement describes one behavior or function.
 - `feasibility` - whether the requirement is technically feasible and not contradictory.
 
+`quality_criterion_score_levels` stores the scoring rubric for requirement criteria. Each criterion has score bands for `10`, `8-9`, `6-7`, `4-5`, `1-3`, and `0`, so assessors can use the same interpretation of the `0..10` scale.
+
 ## Core Model
 
 ```text
+quality_criteria
+  -> quality_criterion_score_levels
 datasets
   -> dataset_cases
     -> input_profile_code / input_profile_name
