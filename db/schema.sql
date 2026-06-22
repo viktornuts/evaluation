@@ -14,10 +14,21 @@ CREATE TABLE IF NOT EXISTS eval_runs (
     id TEXT PRIMARY KEY,
     dataset_id TEXT NOT NULL,
     run_code TEXT NOT NULL,
+    agent_name TEXT,
+    agent_version TEXT,
+    agent_build TEXT,
+    agent_config_json TEXT,
+    prompt_name TEXT,
     prompt_version TEXT,
+    prompt_snapshot TEXT,
+    model_provider TEXT,
+    model_name TEXT,
     model_version TEXT,
+    temperature REAL CHECK (temperature IS NULL OR temperature >= 0),
+    top_p REAL CHECK (top_p IS NULL OR (top_p >= 0 AND top_p <= 1)),
     code_version TEXT,
     dataset_version TEXT,
+    run_config_json TEXT,
     started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     finished_at TEXT,
     status TEXT NOT NULL DEFAULT 'started',
@@ -371,6 +382,8 @@ CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_scope ON test_suite_qua
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_case_id ON test_suite_quality_assessments(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_requirement_id ON test_suite_quality_assessments(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_run_id ON test_suite_quality_assessments(eval_run_id);
+CREATE INDEX IF NOT EXISTS idx_eval_runs_agent ON eval_runs(agent_name, agent_version);
+CREATE INDEX IF NOT EXISTS idx_eval_runs_model ON eval_runs(model_provider, model_name, model_version);
 CREATE INDEX IF NOT EXISTS idx_req_tc_req_id ON requirement_test_case_links(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_tc_tc_id ON requirement_test_case_links(test_case_id);
 CREATE INDEX IF NOT EXISTS idx_step_req_step_id ON test_case_step_requirement_links(test_case_step_id);

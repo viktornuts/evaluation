@@ -44,6 +44,7 @@ The MVP seeds ten requirement criteria:
 requirement_quality_criteria
   -> requirement_quality_criterion_score_levels
 datasets
+  -> eval_runs
   -> dataset_cases
     -> input_profile_code / input_profile_name
     -> source_materials
@@ -65,6 +66,8 @@ datasets
 ```
 
 External reviews never overwrite the primary human/project assessments. They store an independent second opinion and disagreement comments.
+
+`eval_runs` stores an agent run against a dataset. It fixes the agent name/version/build, model provider/name/version, prompt name/version/text snapshot, generation settings such as `temperature` and `top_p`, and JSON fields for additional agent or run configuration. Generated requirements, generated test cases, suite assessments, and evaluation results can link back to the exact run through `eval_run_id`.
 
 `test_cases` stores the test case artifact itself. `test_case_evaluation_results` stores the result of checking a generated test case against the expected dataset, including match, structure, classification, hallucination, unsupported detail count, score, and rationale.
 
