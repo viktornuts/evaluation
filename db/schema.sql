@@ -191,6 +191,18 @@ CREATE TABLE IF NOT EXISTS test_suite_quality_criteria (
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
+CREATE TABLE IF NOT EXISTS test_suite_quality_criterion_score_levels (
+    id TEXT PRIMARY KEY,
+    criterion_id TEXT NOT NULL,
+    score_min INTEGER NOT NULL CHECK (score_min BETWEEN 0 AND 10),
+    score_max INTEGER NOT NULL CHECK (score_max BETWEEN 0 AND 10),
+    label TEXT NOT NULL,
+    description TEXT NOT NULL,
+    FOREIGN KEY (criterion_id) REFERENCES test_suite_quality_criteria(id) ON DELETE CASCADE,
+    CHECK (score_min <= score_max),
+    UNIQUE (criterion_id, score_min, score_max)
+);
+
 CREATE TABLE IF NOT EXISTS test_suite_quality_assessments (
     id TEXT PRIMARY KEY,
     criterion_id TEXT NOT NULL,
@@ -341,6 +353,7 @@ CREATE INDEX IF NOT EXISTS idx_test_cases_case_id ON test_cases(dataset_case_id)
 CREATE INDEX IF NOT EXISTS idx_test_steps_tc_id ON test_case_steps(test_case_id);
 CREATE INDEX IF NOT EXISTS idx_tc_quality_assessments_tc_id ON test_case_quality_assessments(test_case_id);
 CREATE INDEX IF NOT EXISTS idx_tc_quality_assessments_criterion_id ON test_case_quality_assessments(criterion_id);
+CREATE INDEX IF NOT EXISTS idx_suite_quality_score_levels_criterion_id ON test_suite_quality_criterion_score_levels(criterion_id);
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_scope ON test_suite_quality_assessments(scope_type, scope_id);
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_case_id ON test_suite_quality_assessments(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_requirement_id ON test_suite_quality_assessments(requirement_id);

@@ -77,6 +77,8 @@ External reviews never overwrite the primary human/project assessments. They sto
 
 `test_suite_quality_criteria` and `test_suite_quality_assessments` describe the quality of a set of test cases for a scope such as a requirement, dataset case, dataset, or eval run.
 
+`test_suite_quality_criterion_score_levels` stores the scoring rubric for test-suite criteria on the same `0..10` scale.
+
 ## PostgreSQL Later
 
 The SQLite database is the local MVP storage. PostgreSQL migration should be done from the explicit schema and exported data, not by manually recreating tables.

@@ -108,4 +108,92 @@ VALUES
     ('suite_crit_irrelevant_test_case_rate', 'irrelevant_test_case_rate', 'Отсутствие нерелевантных ТК', 'Насколько набор свободен от тест-кейсов, не связанных с требованиями.', 0, 10),
     ('suite_crit_coverage_balance', 'coverage_balance', 'Сбалансированность покрытия', 'Насколько покрытие распределено по требованиям без перекоса в один участок.', 0, 10),
     ('suite_crit_overall_completeness', 'overall_completeness', 'Общая полнота набора', 'Насколько набор тест-кейсов достаточен для проверяемого скоупа.', 0, 10),
-    ('suite_crit_no_suite_level_hallucinations', 'no_suite_level_hallucinations', 'Отсутствие галлюцинаций на уровне набора', 'Насколько весь набор не добавляет неподтвержденные сущности, сценарии и детали.', 0, 10);
+    ('suite_crit_no_suite_level_hallucinations', 'no_suite_level_hallucinations', 'Отсутствие галлюцинаций на уровне набора', 'Насколько весь набор не добавляет неподтвержденные сущности, сценарии и детали.', 0, 10),
+    ('suite_crit_insufficient_detail_handling', 'insufficient_detail_handling', 'Обработка insufficient_detail', 'Насколько набор не содержит ТК с додуманными деталями по требованиям, непригодным для генерации.', 0, 10),
+    ('suite_crit_multi_requirement_traceability', 'multi_requirement_traceability', 'Трассировка ТК к нескольким требованиям', 'Насколько ТК, покрывающие несколько требований, релевантны каждому связанному требованию.', 0, 10);
+
+INSERT OR IGNORE INTO test_suite_quality_criterion_score_levels (id, criterion_id, score_min, score_max, label, description)
+VALUES
+    ('suite_qsl_requirement_coverage_10', 'suite_crit_requirement_coverage', 10, 10, 'fully_covered', 'Все пригодные требования покрыты корректными связанными ТК.'),
+    ('suite_qsl_requirement_coverage_8_9', 'suite_crit_requirement_coverage', 8, 9, 'mostly_covered', 'Покрыто почти всё, есть единичные некритичные пропуски.'),
+    ('suite_qsl_requirement_coverage_6_7', 'suite_crit_requirement_coverage', 6, 7, 'partially_covered', 'Покрыта основная часть требований, но есть заметные пропуски.'),
+    ('suite_qsl_requirement_coverage_4_5', 'suite_crit_requirement_coverage', 4, 5, 'weak_coverage', 'Покрытие фрагментарное, значимая часть требований не имеет ТК.'),
+    ('suite_qsl_requirement_coverage_1_3', 'suite_crit_requirement_coverage', 1, 3, 'poor_coverage', 'Покрыты единичные требования, набор почти не отражает скоуп.'),
+    ('suite_qsl_requirement_coverage_0', 'suite_crit_requirement_coverage', 0, 0, 'not_covered', 'Пригодные требования не покрыты тест-кейсами.'),
+
+    ('suite_qsl_positive_coverage_10', 'suite_crit_positive_coverage', 10, 10, 'positive_complete', 'Для всех требований, где нужен позитивный сценарий, есть релевантные позитивные ТК.'),
+    ('suite_qsl_positive_coverage_8_9', 'suite_crit_positive_coverage', 8, 9, 'positive_mostly_complete', 'Позитивное покрытие почти полное, есть minor-пропуски.'),
+    ('suite_qsl_positive_coverage_6_7', 'suite_crit_positive_coverage', 6, 7, 'positive_partial', 'Позитивные сценарии есть для основной части требований.'),
+    ('suite_qsl_positive_coverage_4_5', 'suite_crit_positive_coverage', 4, 5, 'positive_weak', 'Позитивные сценарии есть выборочно и не закрывают скоуп.'),
+    ('suite_qsl_positive_coverage_1_3', 'suite_crit_positive_coverage', 1, 3, 'positive_poor', 'Позитивное покрытие почти отсутствует.'),
+    ('suite_qsl_positive_coverage_0', 'suite_crit_positive_coverage', 0, 0, 'positive_missing', 'Позитивные ТК отсутствуют там, где они нужны.'),
+
+    ('suite_qsl_negative_coverage_10', 'suite_crit_negative_coverage', 10, 10, 'negative_complete', 'Для всех требований, где нужны негативные сценарии, есть релевантные негативные ТК.'),
+    ('suite_qsl_negative_coverage_8_9', 'suite_crit_negative_coverage', 8, 9, 'negative_mostly_complete', 'Негативное покрытие почти полное, есть minor-пропуски.'),
+    ('suite_qsl_negative_coverage_6_7', 'suite_crit_negative_coverage', 6, 7, 'negative_partial', 'Негативные сценарии есть для основной части применимых требований.'),
+    ('suite_qsl_negative_coverage_4_5', 'suite_crit_negative_coverage', 4, 5, 'negative_weak', 'Негативные сценарии есть выборочно и не закрывают основные риски.'),
+    ('suite_qsl_negative_coverage_1_3', 'suite_crit_negative_coverage', 1, 3, 'negative_poor', 'Негативное покрытие почти отсутствует.'),
+    ('suite_qsl_negative_coverage_0', 'suite_crit_negative_coverage', 0, 0, 'negative_missing', 'Негативные ТК отсутствуют там, где они нужны.'),
+
+    ('suite_qsl_required_checks_10', 'suite_crit_required_checks_coverage', 10, 10, 'required_checks_complete', 'Все обязательные проверки из эталона или требования покрыты.'),
+    ('suite_qsl_required_checks_8_9', 'suite_crit_required_checks_coverage', 8, 9, 'required_checks_mostly_complete', 'Почти все обязательные проверки покрыты.'),
+    ('suite_qsl_required_checks_6_7', 'suite_crit_required_checks_coverage', 6, 7, 'required_checks_partial', 'Покрыта основная часть обязательных проверок.'),
+    ('suite_qsl_required_checks_4_5', 'suite_crit_required_checks_coverage', 4, 5, 'required_checks_weak', 'Покрыты отдельные обязательные проверки, но есть существенные пропуски.'),
+    ('suite_qsl_required_checks_1_3', 'suite_crit_required_checks_coverage', 1, 3, 'required_checks_poor', 'Большинство обязательных проверок пропущено.'),
+    ('suite_qsl_required_checks_0', 'suite_crit_required_checks_coverage', 0, 0, 'required_checks_missing', 'Обязательные проверки не покрыты.'),
+
+    ('suite_qsl_duplicate_rate_10', 'suite_crit_duplicate_rate', 10, 10, 'no_duplicates', 'В наборе нет дублирующих ТК или дублирующих проверок.'),
+    ('suite_qsl_duplicate_rate_8_9', 'suite_crit_duplicate_rate', 8, 9, 'minor_duplicates', 'Есть единичные почти-дубли, не влияющие на итоговую полезность набора.'),
+    ('suite_qsl_duplicate_rate_6_7', 'suite_crit_duplicate_rate', 6, 7, 'some_duplicates', 'Есть заметные дубли, но набор всё ещё полезен.'),
+    ('suite_qsl_duplicate_rate_4_5', 'suite_crit_duplicate_rate', 4, 5, 'many_duplicates', 'Дубли занимают существенную часть набора.'),
+    ('suite_qsl_duplicate_rate_1_3', 'suite_crit_duplicate_rate', 1, 3, 'mostly_duplicates', 'Набор в основном состоит из повторов.'),
+    ('suite_qsl_duplicate_rate_0', 'suite_crit_duplicate_rate', 0, 0, 'duplicate_set', 'Набор не добавляет полезного покрытия из-за дублей.'),
+
+    ('suite_qsl_extra_relevant_10', 'suite_crit_extra_relevant_test_case_rate', 10, 10, 'extra_relevant', 'Все дополнительные ТК сверх эталона релевантны, не дублируют и не искажают требования.'),
+    ('suite_qsl_extra_relevant_8_9', 'suite_crit_extra_relevant_test_case_rate', 8, 9, 'extra_mostly_relevant', 'Дополнительные ТК в основном релевантны, есть minor-замечания.'),
+    ('suite_qsl_extra_relevant_6_7', 'suite_crit_extra_relevant_test_case_rate', 6, 7, 'extra_partly_relevant', 'Часть дополнительных ТК полезна, часть спорна.'),
+    ('suite_qsl_extra_relevant_4_5', 'suite_crit_extra_relevant_test_case_rate', 4, 5, 'extra_weak_relevance', 'Большая часть дополнительных ТК слабо связана с требованиями.'),
+    ('suite_qsl_extra_relevant_1_3', 'suite_crit_extra_relevant_test_case_rate', 1, 3, 'extra_mostly_irrelevant', 'Дополнительные ТК в основном нерелевантны или искажают требования.'),
+    ('suite_qsl_extra_relevant_0', 'suite_crit_extra_relevant_test_case_rate', 0, 0, 'extra_invalid', 'Дополнительные ТК полностью нерелевантны, дублируют или содержат неподтвержденные факты.'),
+
+    ('suite_qsl_irrelevant_10', 'suite_crit_irrelevant_test_case_rate', 10, 10, 'no_irrelevant_tests', 'В наборе нет ТК, не связанных с требованиями.'),
+    ('suite_qsl_irrelevant_8_9', 'suite_crit_irrelevant_test_case_rate', 8, 9, 'minor_irrelevant_tests', 'Есть единичные слабосвязанные ТК без значимого влияния.'),
+    ('suite_qsl_irrelevant_6_7', 'suite_crit_irrelevant_test_case_rate', 6, 7, 'some_irrelevant_tests', 'Есть заметная доля нерелевантных ТК, но основа набора полезна.'),
+    ('suite_qsl_irrelevant_4_5', 'suite_crit_irrelevant_test_case_rate', 4, 5, 'many_irrelevant_tests', 'Нерелевантные ТК существенно загрязняют набор.'),
+    ('suite_qsl_irrelevant_1_3', 'suite_crit_irrelevant_test_case_rate', 1, 3, 'mostly_irrelevant_tests', 'Большинство ТК не связано с требованиями.'),
+    ('suite_qsl_irrelevant_0', 'suite_crit_irrelevant_test_case_rate', 0, 0, 'irrelevant_set', 'Набор фактически не относится к проверяемым требованиям.'),
+
+    ('suite_qsl_coverage_balance_10', 'suite_crit_coverage_balance', 10, 10, 'balanced', 'Покрытие распределено по требованиям без перекосов и искусственного раздувания отдельных требований.'),
+    ('suite_qsl_coverage_balance_8_9', 'suite_crit_coverage_balance', 8, 9, 'mostly_balanced', 'Есть minor-перекосы, но покрытие в целом равномерное.'),
+    ('suite_qsl_coverage_balance_6_7', 'suite_crit_coverage_balance', 6, 7, 'partly_balanced', 'Есть заметные перекосы между требованиями.'),
+    ('suite_qsl_coverage_balance_4_5', 'suite_crit_coverage_balance', 4, 5, 'unbalanced', 'Часть требований перегружена ТК, часть недопокрыта.'),
+    ('suite_qsl_coverage_balance_1_3', 'suite_crit_coverage_balance', 1, 3, 'strongly_unbalanced', 'Покрытие сильно сосредоточено на малой части требований.'),
+    ('suite_qsl_coverage_balance_0', 'suite_crit_coverage_balance', 0, 0, 'no_balance', 'Распределение покрытия непригодно для оценки набора.'),
+
+    ('suite_qsl_overall_completeness_10', 'suite_crit_overall_completeness', 10, 10, 'complete_suite', 'Набор достаточен для проверяемого скоупа и закрывает основные ожидаемые сценарии.'),
+    ('suite_qsl_overall_completeness_8_9', 'suite_crit_overall_completeness', 8, 9, 'mostly_complete_suite', 'Набор почти достаточен, есть minor-пропуски.'),
+    ('suite_qsl_overall_completeness_6_7', 'suite_crit_overall_completeness', 6, 7, 'partly_complete_suite', 'Набор покрывает основу, но требует доработки.'),
+    ('suite_qsl_overall_completeness_4_5', 'suite_crit_overall_completeness', 4, 5, 'incomplete_suite', 'Набор недостаточен для уверенной проверки скоупа.'),
+    ('suite_qsl_overall_completeness_1_3', 'suite_crit_overall_completeness', 1, 3, 'severely_incomplete_suite', 'Набор почти не закрывает проверяемый скоуп.'),
+    ('suite_qsl_overall_completeness_0', 'suite_crit_overall_completeness', 0, 0, 'empty_suite', 'Набор отсутствует или непригоден.'),
+
+    ('suite_qsl_no_hallucinations_10', 'suite_crit_no_suite_level_hallucinations', 10, 10, 'no_hallucinations', 'Набор не содержит фактов, сценариев, ролей, UI-элементов или ограничений вне требований.'),
+    ('suite_qsl_no_hallucinations_8_9', 'suite_crit_no_suite_level_hallucinations', 8, 9, 'minor_unsupported_details', 'Есть minor-детали, которые слабо подтверждены, но не меняют смысл проверки.'),
+    ('suite_qsl_no_hallucinations_6_7', 'suite_crit_no_suite_level_hallucinations', 6, 7, 'some_unsupported_details', 'Есть неподтвержденные детали, часть ТК требует ревью.'),
+    ('suite_qsl_no_hallucinations_4_5', 'suite_crit_no_suite_level_hallucinations', 4, 5, 'many_unsupported_details', 'Неподтвержденные детали заметно влияют на качество набора.'),
+    ('suite_qsl_no_hallucinations_1_3', 'suite_crit_no_suite_level_hallucinations', 1, 3, 'hallucinated_suite', 'Набор содержит много выдуманных деталей или сценариев.'),
+    ('suite_qsl_no_hallucinations_0', 'suite_crit_no_suite_level_hallucinations', 0, 0, 'invalid_hallucinated_suite', 'Набор непригоден из-за галлюцинаций.'),
+
+    ('suite_qsl_insufficient_detail_10', 'suite_crit_insufficient_detail_handling', 10, 10, 'handled_correctly', 'По требованиям insufficient_detail не сгенерированы ТК с додуманными деталями; такие требования корректно исключены или помечены.'),
+    ('suite_qsl_insufficient_detail_8_9', 'suite_crit_insufficient_detail_handling', 8, 9, 'mostly_handled', 'Обработка почти корректная, есть minor-спорные случаи.'),
+    ('suite_qsl_insufficient_detail_6_7', 'suite_crit_insufficient_detail_handling', 6, 7, 'partly_handled', 'Часть недостаточно детализированных требований обработана корректно, часть требует ревью.'),
+    ('suite_qsl_insufficient_detail_4_5', 'suite_crit_insufficient_detail_handling', 4, 5, 'weak_handling', 'Модель иногда генерирует ТК по недостаточным требованиям с допущениями.'),
+    ('suite_qsl_insufficient_detail_1_3', 'suite_crit_insufficient_detail_handling', 1, 3, 'poor_handling', 'Модель часто генерирует ТК с додуманными деталями по insufficient_detail.'),
+    ('suite_qsl_insufficient_detail_0', 'suite_crit_insufficient_detail_handling', 0, 0, 'not_handled', 'Статус insufficient_detail игнорируется.'),
+
+    ('suite_qsl_multi_traceability_10', 'suite_crit_multi_requirement_traceability', 10, 10, 'fully_relevant_links', 'Каждый ТК, связанный с несколькими требованиями, релевантен каждому связанному требованию.'),
+    ('suite_qsl_multi_traceability_8_9', 'suite_crit_multi_requirement_traceability', 8, 9, 'mostly_relevant_links', 'Связи почти все корректны, есть minor-спорные привязки.'),
+    ('suite_qsl_multi_traceability_6_7', 'suite_crit_multi_requirement_traceability', 6, 7, 'partly_relevant_links', 'Часть many-to-many связей корректна, часть требует проверки.'),
+    ('suite_qsl_multi_traceability_4_5', 'suite_crit_multi_requirement_traceability', 4, 5, 'weak_relevance_links', 'Есть заметное число ТК, привязанных к требованиям, которые они фактически не проверяют.'),
+    ('suite_qsl_multi_traceability_1_3', 'suite_crit_multi_requirement_traceability', 1, 3, 'poor_relevance_links', 'Большинство many-to-many связей нерелевантны.'),
+    ('suite_qsl_multi_traceability_0', 'suite_crit_multi_requirement_traceability', 0, 0, 'invalid_links', 'Связи ТК с несколькими требованиями непригодны или вводят в заблуждение.');
