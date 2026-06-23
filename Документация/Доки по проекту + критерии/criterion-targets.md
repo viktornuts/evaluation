@@ -25,27 +25,27 @@
 
 | Код в БД | Цель |
 |---|---|
-| `decomposition_completeness` | 10 / 100% |
-| `decomposition_boundaries` | 10 / корректные границы |
-| `requirement_consolidation` | 10 / без дублей и потери смысла |
+| `decomposition_completeness` | 100% |
+| `decomposition_boundaries` | 100% |
+| `requirement_consolidation` | 100% |
 
 ## Набор ТК
 
 | Код в БД | Цель |
 |---|---|
-| `positive_coverage` | 10 / 100% |
-| `negative_coverage` | 10 / 100% где применимо |
-| `suite_cleanliness` | 10 / 0 лишних |
-| `required_checks_coverage` | 10 / 100% |
-| `overall_completeness` | 10 / достаточно для scope |
+| `positive_coverage` | 100% |
+| `negative_coverage` | 100% |
+| `suite_cleanliness` | 0 лишних |
+| `required_checks_coverage` | 100% |
+| `overall_completeness` | 100% |
 
 ## Отдельные ТК
 
 | Код в БД | Цель |
 |---|---|
-| `classification_correctness` | 10 / вид ТК корректен |
-| `template_required_attributes` | 10 / 100% атрибутов |
-| `conditions_quality` | 10 / условия корректны |
-| `step_atomicity` | 10 / шаги атомарны |
-| `expected_result_quality` | 10 / ожидаемый результат у каждого шага |
-| `no_hallucinations` | 10 / 0 галлюцинаций |
+| `classification_correctness` | ≥0,9 |
+| `template_required_attributes` | 100% |
+| `conditions_quality` | ≥0,9 |
+| `step_atomicity` | ≥0,9 |
+| `expected_result_quality` | ≥0,9 |
+| `no_hallucinations` | галлюцинаций 0 |

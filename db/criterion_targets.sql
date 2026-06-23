@@ -2,9 +2,9 @@ UPDATE requirement_decomposition_quality_criteria
 SET
     target_score = 10.0,
     target_display = CASE code
-        WHEN 'decomposition_completeness' THEN '10 / 100%'
-        WHEN 'decomposition_boundaries' THEN '10 / корректные границы'
-        WHEN 'requirement_consolidation' THEN '10 / без дублей и потери смысла'
+        WHEN 'decomposition_completeness' THEN '100%'
+        WHEN 'decomposition_boundaries' THEN '100%'
+        WHEN 'requirement_consolidation' THEN '100%'
     END,
     target_description = CASE code
         WHEN 'decomposition_completeness' THEN 'Все значимые атомарные требования из эталона выделены.'
@@ -57,11 +57,11 @@ UPDATE test_suite_quality_criteria
 SET
     target_score = 10.0,
     target_display = CASE code
-        WHEN 'positive_coverage' THEN '10 / 100%'
-        WHEN 'negative_coverage' THEN '10 / 100% где применимо'
-        WHEN 'suite_cleanliness' THEN '10 / 0 лишних'
-        WHEN 'required_checks_coverage' THEN '10 / 100%'
-        WHEN 'overall_completeness' THEN '10 / достаточно для scope'
+        WHEN 'positive_coverage' THEN '100%'
+        WHEN 'negative_coverage' THEN '100%'
+        WHEN 'suite_cleanliness' THEN '0 лишних'
+        WHEN 'required_checks_coverage' THEN '100%'
+        WHEN 'overall_completeness' THEN '100%'
     END,
     target_description = CASE code
         WHEN 'positive_coverage' THEN 'Все требования, где нужен позитивный сценарий, покрыты релевантными позитивными ТК.'
@@ -82,12 +82,12 @@ UPDATE test_case_quality_criteria
 SET
     target_score = 10.0,
     target_display = CASE code
-        WHEN 'classification_correctness' THEN '10 / вид ТК корректен'
-        WHEN 'template_required_attributes' THEN '10 / 100% атрибутов'
-        WHEN 'conditions_quality' THEN '10 / условия корректны'
-        WHEN 'step_atomicity' THEN '10 / шаги атомарны'
-        WHEN 'expected_result_quality' THEN '10 / ожидаемый результат у каждого шага'
-        WHEN 'no_hallucinations' THEN '10 / 0 галлюцинаций'
+        WHEN 'classification_correctness' THEN '≥0,9'
+        WHEN 'template_required_attributes' THEN '100%'
+        WHEN 'conditions_quality' THEN '≥0,9'
+        WHEN 'step_atomicity' THEN '≥0,9'
+        WHEN 'expected_result_quality' THEN '≥0,9'
+        WHEN 'no_hallucinations' THEN 'галлюцинаций 0'
     END,
     target_description = CASE code
         WHEN 'classification_correctness' THEN 'Вид ТК корректно определен как WEB/API/INT/E2E или другой применимый тип.'
