@@ -1,0 +1,1023 @@
+{
+  "dataset": {
+    "id": "dataset_customer_gold_v1",
+    "name": "customer_gold",
+    "version": "v1",
+    "description": "Высокоприоритетный эталонный датасет от заказчика: требования и тест-кейсы по интеграции С.ФТ с С.Релизы.",
+    "status": "draft"
+  },
+  "cases": [
+    {
+      "id": "case_customer_gold_release_integration",
+      "case_code": "GOLD-REQ-001",
+      "title": "Интеграция С.ФТ с С.Релизы: эталонные требования и ТК",
+      "description": "Эталонный набор требований и тест-кейсов из материалов заказчика.",
+      "case_type": "golden",
+      "input_profile_code": "customer_gold_requirements",
+      "input_profile_name": "Эталонные требования заказчика",
+      "test_cases": [
+        {
+          "id": "tc_customer_gold_tc_01",
+          "test_case_code": "TC-01",
+          "title": "Атрибут «Релиз»: наличие и размещение",
+          "test_case_type": "WEB",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. Пользователь авторизован в С.ФТ с правом создания Тест-плана",
+          "postconditions": "1. ТП создан без привязки к релизу",
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_01_1",
+              "step_number": 1,
+              "action": "Открыть форму создания Тест-плана",
+              "expected_result": "В форме присутствует поле «Релиз»; поле расположено после поля «Описание»",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_01",
+                "req_customer_gold_req_02",
+                "req_customer_gold_req_03"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_01_2",
+              "step_number": 2,
+              "action": "Сохранить Тест-план без заполнения поля «Релиз»",
+              "expected_result": "Тест-план сохраняется (атрибут необязательный)",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_01",
+                "req_customer_gold_req_02",
+                "req_customer_gold_req_03"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_01_3",
+              "step_number": 3,
+              "action": "Открыть страницу созданного ТП, раздел «Атрибуты»",
+              "expected_result": "Атрибут «Релиз» отображается в разделе «Атрибуты»",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_01",
+                "req_customer_gold_req_02",
+                "req_customer_gold_req_03"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_02",
+          "test_case_code": "TC-02",
+          "title": "Доступ к полю «Релиз» по роли (активный статус)",
+          "test_case_type": "WEB",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. ТП в статусе, отличном от «Завершен»",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_02_1",
+              "step_number": 1,
+              "action": "Войти под ролью Тест-менеджер, открыть ТП, заполнить/изменить поле «Релиз», сохранить",
+              "expected_result": "Поле доступно для заполнения/редактирования, изменение сохраняется",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_04",
+                "req_customer_gold_req_05",
+                "req_customer_gold_req_06"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_02_2",
+              "step_number": 2,
+              "action": "Войти под ролью Тестировщик, открыть ТП, заполнить/изменить поле «Релиз», сохранить",
+              "expected_result": "Поле доступно для заполнения/редактирования, изменение сохраняется",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_04",
+                "req_customer_gold_req_05",
+                "req_customer_gold_req_06"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_03",
+          "test_case_code": "TC-03",
+          "title": "Поле «Релиз» недоступно в статусе «Завершен»",
+          "test_case_type": "WEB",
+          "direction": "negative",
+          "origin": "expected",
+          "preconditions": "1. ТП в статусе «Завершен»",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_03_1",
+              "step_number": 1,
+              "action": "Открыть ТП, попытаться заполнить/изменить поле «Релиз»",
+              "expected_result": "Поле «Релиз» недоступно для заполнения/редактирования",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_04"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_04",
+          "test_case_code": "TC-04",
+          "title": "Завершение ТП с заполненным релизом",
+          "test_case_type": "WEB",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. ТП в статусе ≠ «Завершен», поле «Релиз» заполнено",
+          "postconditions": "1. ТП в статусе «Завершен»",
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_04_1",
+              "step_number": 1,
+              "action": "Нажать «Завершить»",
+              "expected_result": "ТП успешно переводится в статус «Завершен» без диалога подтверждения",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_07",
+                "req_customer_gold_req_08",
+                "req_customer_gold_req_10"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_05",
+          "test_case_code": "TC-05",
+          "title": "Завершение ТП без релиза — подтверждение",
+          "test_case_type": "WEB",
+          "direction": "negative",
+          "origin": "expected",
+          "preconditions": "1. ТП в статусе ≠ «Завершен», поле «Релиз» не заполнено",
+          "postconditions": "1. ТП в статусе «Завершен»",
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_05_1",
+              "step_number": 1,
+              "action": "Нажать «Завершить»",
+              "expected_result": "Появляется диалог «Вы уверены, что хотите завершить тест-план без указания релиза?» с кнопками «Завершить» и «Отменить»",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_07",
+                "req_customer_gold_req_09",
+                "req_customer_gold_req_10"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_05_2",
+              "step_number": 2,
+              "action": "В диалоге нажать «Завершить»",
+              "expected_result": "ТП переводится в статус «Завершен»",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_07",
+                "req_customer_gold_req_09",
+                "req_customer_gold_req_10"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_06",
+          "test_case_code": "TC-06",
+          "title": "Поле «Релиз» не наследуется при дублировании",
+          "test_case_type": "WEB",
+          "direction": "negative",
+          "origin": "expected",
+          "preconditions": "1. Существует ТП с заполненным полем «Релиз»",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_06_1",
+              "step_number": 1,
+              "action": "Выполнить дублирование ТП, открыть копию",
+              "expected_result": "В копии ТП поле «Релиз» не заполнено",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_11"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_07",
+          "test_case_code": "TC-07",
+          "title": "Получение списка доступных релизов",
+          "test_case_type": "INT",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. В системе есть релизы в разных статусах",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_07_1",
+              "step_number": 1,
+              "action": "Нажать на поле «Релиз»",
+              "expected_result": "Инициируется GET-запрос на получение списка релизов",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_12",
+                "req_customer_gold_req_13",
+                "req_customer_gold_req_14",
+                "req_customer_gold_req_15"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_07_2",
+              "step_number": 2,
+              "action": "Проверить состав выдачи",
+              "expected_result": "Возвращаются релизы в статусах REGISTERED, FORMING, FIXATION, IFT, UAT",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_12",
+                "req_customer_gold_req_13",
+                "req_customer_gold_req_14",
+                "req_customer_gold_req_15"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_07_3",
+              "step_number": 3,
+              "action": "Проверить представление релиза",
+              "expected_result": "Релиз представлен в формате [number name] (RL-T1-NNNNNN Наименование релиза)",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_12",
+                "req_customer_gold_req_13",
+                "req_customer_gold_req_14",
+                "req_customer_gold_req_15"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_07_4",
+              "step_number": 4,
+              "action": "Изменить параметры size и page",
+              "expected_result": "Размер и номер страницы регулируются, выдача меняется соответственно",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_12",
+                "req_customer_gold_req_13",
+                "req_customer_gold_req_14",
+                "req_customer_gold_req_15"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_08",
+          "test_case_code": "TC-08",
+          "title": "Привязка ТП к релизу",
+          "test_case_type": "INT",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. Открыт ТП, доступен список релизов",
+          "postconditions": "1. ТП привязан к релизу",
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_08_1",
+              "step_number": 1,
+              "action": "Выбрать релиз в поле «Релиз»",
+              "expected_result": "Вызывается POST «добавить ТП в релиз» (/api/v0.1/entities)",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_16",
+                "req_customer_gold_req_17",
+                "req_customer_gold_req_18",
+                "req_customer_gold_req_19"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_08_2",
+              "step_number": 2,
+              "action": "Дождаться ответа 200",
+              "expected_result": "Выводится сообщение «ТП добавлен в релиз»",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_16",
+                "req_customer_gold_req_17",
+                "req_customer_gold_req_18",
+                "req_customer_gold_req_19"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_08_3",
+              "step_number": 3,
+              "action": "Запросить атрибуты ТП",
+              "expected_result": "В атрибутах ТП сохранены номер релиза (release) и relationId",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_16",
+                "req_customer_gold_req_17",
+                "req_customer_gold_req_18",
+                "req_customer_gold_req_19"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_08_4",
+              "step_number": 4,
+              "action": "Выполнить POST …/v1/test-plans/[testPlanCode]/linkRelease",
+              "expected_result": "Ответ 200 — «Релиз сохранен в атрибуты ТП»",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_16",
+                "req_customer_gold_req_17",
+                "req_customer_gold_req_18",
+                "req_customer_gold_req_19"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_09",
+          "test_case_code": "TC-09",
+          "title": "Отвязка ТП от релиза",
+          "test_case_type": "INT",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. ТП привязан к релизу, известен relationId",
+          "postconditions": "1. ТП не привязан к релизу",
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_09_1",
+              "step_number": 1,
+              "action": "Очистить поле «Релиз» при редактировании ТП",
+              "expected_result": "Отправляется DELETE-запрос в С.Релизы на удаление ТП из релиза с использованием relationId",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_20",
+                "req_customer_gold_req_21"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_09_2",
+              "step_number": 2,
+              "action": "Дождаться ответа 204, запросить атрибуты ТП",
+              "expected_result": "Из атрибутов ТП очищены release и relationId",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_20",
+                "req_customer_gold_req_21"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_10",
+          "test_case_code": "TC-10",
+          "title": "Публикация событий в Kafka",
+          "test_case_type": "INT",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. Подписка на топик PPTM_OUTGOING_EVENTS_TOPIC",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_10_1",
+              "step_number": 1,
+              "action": "Создать ТП с заполненным полем «Релиз»",
+              "expected_result": "В топик отправлено событие CREATE TEST_PLAN с информацией о доп. атрибуте",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_22",
+                "req_customer_gold_req_23",
+                "req_customer_gold_req_24",
+                "req_customer_gold_req_25"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_10_2",
+              "step_number": 2,
+              "action": "Изменить значение поля «Релиз» в ТП",
+              "expected_result": "В топик отправлено событие UPDATE TEST_PLAN с информацией о доп. атрибуте",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_22",
+                "req_customer_gold_req_23",
+                "req_customer_gold_req_24",
+                "req_customer_gold_req_25"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_10_3",
+              "step_number": 3,
+              "action": "Создать тест-кейс плана в контексте ТП с заполненным «Релиз»",
+              "expected_result": "В топик отправлено событие CREATE TEST_PLAN_CASE с информацией о доп. атрибуте",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_22",
+                "req_customer_gold_req_23",
+                "req_customer_gold_req_24",
+                "req_customer_gold_req_25"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_10_4",
+              "step_number": 4,
+              "action": "Изменить тест-кейс плана в контексте ТП с заполненным «Релиз»",
+              "expected_result": "В топик отправлено событие UPDATE TEST_PLAN_CASE с информацией о доп. атрибуте",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_22",
+                "req_customer_gold_req_23",
+                "req_customer_gold_req_24",
+                "req_customer_gold_req_25"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_11",
+          "test_case_code": "TC-11",
+          "title": "Интеграция в пределах одного контура",
+          "test_case_type": "INT",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. Системы в одном контуре (inno.local↔inno.local или region↔region)",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_11_1",
+              "step_number": 1,
+              "action": "Выполнить привязку ТП к релизу в пределах одного контура",
+              "expected_result": "Интеграция выполняется успешно внутри контура",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_26"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_12",
+          "test_case_code": "TC-12",
+          "title": "Межконтурное взаимодействие не предусмотрено",
+          "test_case_type": "INT",
+          "direction": "negative",
+          "origin": "expected",
+          "preconditions": "1. Попытка взаимодействия между разными контурами",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_12_1",
+              "step_number": 1,
+              "action": "Инициировать межконтурный вызов С.ФТ↔С.Релизы",
+              "expected_result": "Межконтурное взаимодействие не выполняется (не предусмотрено)",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_26"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_13",
+          "test_case_code": "TC-13",
+          "title": "Ограничения на стороне С.Релизы",
+          "test_case_type": "WEB",
+          "direction": "negative",
+          "origin": "expected",
+          "preconditions": "1. Пользователь в С.Релизы, вкладка «Тест-планы»",
+          "postconditions": null,
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_13_1",
+              "step_number": 1,
+              "action": "Открыть вкладку «Тест-планы»",
+              "expected_result": "Кнопка «Добавить тест-план» и возможность прикрепления ТП скрыты",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_28",
+                "req_customer_gold_req_29"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_13_2",
+              "step_number": 2,
+              "action": "Попытаться добавить ТП в С.Релизы вручную",
+              "expected_result": "Ручное добавление ТП запрещено",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_28",
+                "req_customer_gold_req_29"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        },
+        {
+          "id": "tc_customer_gold_tc_14",
+          "test_case_code": "TC-14",
+          "title": "E2E: целевой сценарий привязки релиза",
+          "test_case_type": "E2E",
+          "direction": "positive",
+          "origin": "expected",
+          "preconditions": "1. Пользователь в С.ФТ; системы в одном контуре",
+          "postconditions": "1. ТП привязан к релизу в С.Релизы",
+          "steps": [
+            {
+              "id": "step_tc_customer_gold_tc_14_1",
+              "step_number": 1,
+              "action": "Заполнить поле «Релиз» в ТП и сохранить",
+              "expected_result": "ТП сохраняется в релиз в С.Релизы по API; выводится «ТП добавлен в релиз»",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_01",
+                "req_customer_gold_req_16",
+                "req_customer_gold_req_17",
+                "req_customer_gold_req_18",
+                "req_customer_gold_req_26"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            },
+            {
+              "id": "step_tc_customer_gold_tc_14_2",
+              "step_number": 2,
+              "action": "Запросить атрибуты ТП",
+              "expected_result": "В атрибутах ТП сохранены release и relationId",
+              "linked_requirement_ids": [
+                "req_customer_gold_req_01",
+                "req_customer_gold_req_16",
+                "req_customer_gold_req_17",
+                "req_customer_gold_req_18",
+                "req_customer_gold_req_26"
+              ],
+              "link_rationale": "Связь шага унаследована от связи тест-кейса с требованиями в эталонном Excel; отдельной покроковой разметки в источнике нет.",
+              "linked_by": "customer_gold_v1_import",
+              "review_status": "approved"
+            }
+          ]
+        }
+      ],
+      "requirement_test_case_links": [
+        {
+          "id": "rtcl_customer_gold_req_01_tc_01",
+          "requirement_id": "req_customer_gold_req_01",
+          "test_case_id": "tc_customer_gold_tc_01",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_01_tc_14",
+          "requirement_id": "req_customer_gold_req_01",
+          "test_case_id": "tc_customer_gold_tc_14",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_02_tc_01",
+          "requirement_id": "req_customer_gold_req_02",
+          "test_case_id": "tc_customer_gold_tc_01",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_03_tc_01",
+          "requirement_id": "req_customer_gold_req_03",
+          "test_case_id": "tc_customer_gold_tc_01",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_04_tc_02",
+          "requirement_id": "req_customer_gold_req_04",
+          "test_case_id": "tc_customer_gold_tc_02",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_04_tc_03",
+          "requirement_id": "req_customer_gold_req_04",
+          "test_case_id": "tc_customer_gold_tc_03",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_05_tc_02",
+          "requirement_id": "req_customer_gold_req_05",
+          "test_case_id": "tc_customer_gold_tc_02",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_06_tc_02",
+          "requirement_id": "req_customer_gold_req_06",
+          "test_case_id": "tc_customer_gold_tc_02",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_07_tc_04",
+          "requirement_id": "req_customer_gold_req_07",
+          "test_case_id": "tc_customer_gold_tc_04",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_07_tc_05",
+          "requirement_id": "req_customer_gold_req_07",
+          "test_case_id": "tc_customer_gold_tc_05",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_08_tc_04",
+          "requirement_id": "req_customer_gold_req_08",
+          "test_case_id": "tc_customer_gold_tc_04",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_09_tc_05",
+          "requirement_id": "req_customer_gold_req_09",
+          "test_case_id": "tc_customer_gold_tc_05",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_10_tc_04",
+          "requirement_id": "req_customer_gold_req_10",
+          "test_case_id": "tc_customer_gold_tc_04",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_10_tc_05",
+          "requirement_id": "req_customer_gold_req_10",
+          "test_case_id": "tc_customer_gold_tc_05",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_11_tc_06",
+          "requirement_id": "req_customer_gold_req_11",
+          "test_case_id": "tc_customer_gold_tc_06",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_12_tc_07",
+          "requirement_id": "req_customer_gold_req_12",
+          "test_case_id": "tc_customer_gold_tc_07",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_13_tc_07",
+          "requirement_id": "req_customer_gold_req_13",
+          "test_case_id": "tc_customer_gold_tc_07",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_14_tc_07",
+          "requirement_id": "req_customer_gold_req_14",
+          "test_case_id": "tc_customer_gold_tc_07",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_15_tc_07",
+          "requirement_id": "req_customer_gold_req_15",
+          "test_case_id": "tc_customer_gold_tc_07",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_16_tc_08",
+          "requirement_id": "req_customer_gold_req_16",
+          "test_case_id": "tc_customer_gold_tc_08",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_16_tc_14",
+          "requirement_id": "req_customer_gold_req_16",
+          "test_case_id": "tc_customer_gold_tc_14",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_17_tc_08",
+          "requirement_id": "req_customer_gold_req_17",
+          "test_case_id": "tc_customer_gold_tc_08",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_17_tc_14",
+          "requirement_id": "req_customer_gold_req_17",
+          "test_case_id": "tc_customer_gold_tc_14",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_18_tc_08",
+          "requirement_id": "req_customer_gold_req_18",
+          "test_case_id": "tc_customer_gold_tc_08",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_18_tc_14",
+          "requirement_id": "req_customer_gold_req_18",
+          "test_case_id": "tc_customer_gold_tc_14",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_19_tc_08",
+          "requirement_id": "req_customer_gold_req_19",
+          "test_case_id": "tc_customer_gold_tc_08",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_20_tc_09",
+          "requirement_id": "req_customer_gold_req_20",
+          "test_case_id": "tc_customer_gold_tc_09",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_21_tc_09",
+          "requirement_id": "req_customer_gold_req_21",
+          "test_case_id": "tc_customer_gold_tc_09",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_22_tc_10",
+          "requirement_id": "req_customer_gold_req_22",
+          "test_case_id": "tc_customer_gold_tc_10",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_23_tc_10",
+          "requirement_id": "req_customer_gold_req_23",
+          "test_case_id": "tc_customer_gold_tc_10",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_24_tc_10",
+          "requirement_id": "req_customer_gold_req_24",
+          "test_case_id": "tc_customer_gold_tc_10",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_25_tc_10",
+          "requirement_id": "req_customer_gold_req_25",
+          "test_case_id": "tc_customer_gold_tc_10",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_26_tc_11",
+          "requirement_id": "req_customer_gold_req_26",
+          "test_case_id": "tc_customer_gold_tc_11",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_26_tc_12",
+          "requirement_id": "req_customer_gold_req_26",
+          "test_case_id": "tc_customer_gold_tc_12",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_26_tc_14",
+          "requirement_id": "req_customer_gold_req_26",
+          "test_case_id": "tc_customer_gold_tc_14",
+          "coverage_status": "covered",
+          "coverage_type": "positive",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_28_tc_13",
+          "requirement_id": "req_customer_gold_req_28",
+          "test_case_id": "tc_customer_gold_tc_13",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        },
+        {
+          "id": "rtcl_customer_gold_req_29_tc_13",
+          "requirement_id": "req_customer_gold_req_29",
+          "test_case_id": "tc_customer_gold_tc_13",
+          "coverage_status": "covered",
+          "coverage_type": "negative",
+          "is_primary": true,
+          "rationale": "Связь импортирована из листа покрытия эталонных тест-кейсов.",
+          "linked_by": "customer_gold_v1_import",
+          "review_status": "approved"
+        }
+      ]
+    }
+  ]
+}
