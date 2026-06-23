@@ -148,6 +148,9 @@ CREATE TABLE IF NOT EXISTS requirement_decomposition_quality_criteria (
     description TEXT,
     scale_min INTEGER NOT NULL DEFAULT 0,
     scale_max INTEGER NOT NULL DEFAULT 10,
+    target_score REAL CHECK (target_score IS NULL OR (target_score BETWEEN 0 AND 10)),
+    target_display TEXT,
+    target_description TEXT,
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
@@ -198,6 +201,9 @@ CREATE TABLE IF NOT EXISTS requirement_quality_criteria (
     description TEXT,
     scale_min INTEGER NOT NULL DEFAULT 0,
     scale_max INTEGER NOT NULL DEFAULT 10,
+    target_score REAL CHECK (target_score IS NULL OR (target_score BETWEEN 0 AND 10)),
+    target_display TEXT,
+    target_description TEXT,
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
@@ -262,6 +268,9 @@ CREATE TABLE IF NOT EXISTS test_case_quality_criteria (
     description TEXT,
     scale_min INTEGER NOT NULL DEFAULT 0,
     scale_max INTEGER NOT NULL DEFAULT 10,
+    target_score REAL CHECK (target_score IS NULL OR (target_score BETWEEN 0 AND 10)),
+    target_display TEXT,
+    target_description TEXT,
     is_active INTEGER NOT NULL DEFAULT 1
 );
 
@@ -301,6 +310,9 @@ CREATE TABLE IF NOT EXISTS test_suite_quality_criteria (
     description TEXT,
     scale_min INTEGER NOT NULL DEFAULT 0,
     scale_max INTEGER NOT NULL DEFAULT 10,
+    target_score REAL CHECK (target_score IS NULL OR (target_score BETWEEN 0 AND 10)),
+    target_display TEXT,
+    target_description TEXT,
     is_active INTEGER NOT NULL DEFAULT 1
 );
 

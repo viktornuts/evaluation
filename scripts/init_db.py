@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DB = ROOT / "data" / "cpt_eval.sqlite"
 SCHEMA = ROOT / "db" / "schema.sql"
 SEED = ROOT / "db" / "seed.sql"
+CRITERION_TARGETS = ROOT / "db" / "criterion_targets.sql"
 
 
 def run_script(connection: sqlite3.Connection, path: Path) -> None:
@@ -24,6 +25,7 @@ def init_db(db_path: Path, reset: bool) -> None:
         connection.execute("PRAGMA foreign_keys = ON")
         run_script(connection, SCHEMA)
         run_script(connection, SEED)
+        run_script(connection, CRITERION_TARGETS)
         connection.commit()
 
 
