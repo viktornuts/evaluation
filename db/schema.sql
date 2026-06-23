@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS eval_runs (
     response_format_strictness TEXT NOT NULL DEFAULT 'strict'
         CHECK (response_format_strictness IN ('strict', 'medium', 'freeform')),
     response_contract_json TEXT,
+    change_summary TEXT,
     dataset_version TEXT,
     started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     finished_at TEXT,
