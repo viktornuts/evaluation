@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sqlite3
 from pathlib import Path
 
@@ -41,17 +42,22 @@ def connect(db_path: Path) -> sqlite3.Connection:
     return connection
 
 
-def run_by_code(connection: sqlite3.Connection, run_code: str) -> sqlite3.Row | None:
-    return connection.execute(
+def natural_run_key(run: sqlite3.Row) -> tuple[int, str]:
+    match = re.search(r"(\d+)", run["run_code"])
+    return (int(match.group(1)) if match else 9999, run["run_code"])
+
+
+def eval_runs(connection: sqlite3.Connection) -> list[sqlite3.Row]:
+    rows = connection.execute(
         """
         SELECT *
         FROM eval_runs
-        WHERE dataset_id = ? AND run_code = ?
-        ORDER BY started_at DESC
-        LIMIT 1
+        WHERE dataset_id = ?
+        ORDER BY started_at, run_code
         """,
-        (DATASET_ID, run_code),
-    ).fetchone()
+        (DATASET_ID,),
+    ).fetchall()
+    return sorted(rows, key=natural_run_key)
 
 
 def target_map(connection: sqlite3.Connection, table: str) -> dict[str, str]:
@@ -62,7 +68,7 @@ def target_map(connection: sqlite3.Connection, table: str) -> dict[str, str]:
 def suite_scores(connection: sqlite3.Connection, eval_run_id: str) -> dict[str, str]:
     rows = connection.execute(
         """
-        SELECT c.code, a.score, a.label
+        SELECT c.code, a.score
         FROM test_suite_quality_assessments a
         JOIN test_suite_quality_criteria c ON c.id = a.criterion_id
         WHERE a.eval_run_id = ?
@@ -70,6 +76,20 @@ def suite_scores(connection: sqlite3.Connection, eval_run_id: str) -> dict[str, 
         (eval_run_id,),
     ).fetchall()
     return {row["code"]: f"{row['score']:.1f}/10" for row in rows}
+
+
+def suite_rationales(connection: sqlite3.Connection, eval_run_id: str) -> dict[str, tuple[float, str]]:
+    rows = connection.execute(
+        """
+        SELECT c.code, a.score, a.rationale
+        FROM test_suite_quality_assessments a
+        JOIN test_suite_quality_criteria c ON c.id = a.criterion_id
+        WHERE a.eval_run_id = ?
+        ORDER BY c.code
+        """,
+        (eval_run_id,),
+    ).fetchall()
+    return {row["code"]: (row["score"], row["rationale"] or "") for row in rows}
 
 
 def test_case_average_scores(connection: sqlite3.Connection, eval_run_id: str) -> dict[str, str]:
@@ -102,31 +122,12 @@ def decomposition_scores(connection: sqlite3.Connection, eval_run_id: str) -> di
     return {row["code"]: f"{row['avg_score']:.1f}/10" for row in rows}
 
 
-def table_block(
-    title: str,
-    rows: list[tuple[str, str]],
-    targets: dict[str, str],
-    baseline: dict[str, str],
-    round_1: dict[str, str],
-    round_2: dict[str, str],
-) -> list[str]:
-    lines = [
-        f"## {title}",
-        "",
-        "| Критерий | Цель | Baseline | Раунд 1 | Раунд 2 |",
-        "|---|---:|---:|---:|---:|",
-    ]
-    for code, name in rows:
-        lines.append(
-            "| "
-            f"{name} | "
-            f"{targets.get(code, '—')} | "
-            f"{baseline.get(code, '—')} | "
-            f"{round_1.get(code, '—')} | "
-            f"{round_2.get(code, '—')} |"
-        )
-    lines.append("")
-    return lines
+def generated_case_count(connection: sqlite3.Connection, eval_run_id: str) -> int:
+    row = connection.execute(
+        "SELECT COUNT(*) AS count FROM test_cases WHERE eval_run_id = ?",
+        (eval_run_id,),
+    ).fetchone()
+    return int(row["count"])
 
 
 def compact_name_version(name: str | None, version: str | None) -> str:
@@ -138,64 +139,101 @@ def compact_name_version(name: str | None, version: str | None) -> str:
     return " ".join(values)
 
 
-def run_summary_table(run: sqlite3.Row | None) -> list[str]:
-    if run is None:
-        return [
-            "## Параметры прогона",
-            "",
-            "| Прогон | Что изменили | Агент | Модель | Temperature | Top P | Режим |",
-            "|---|---|---|---|---:|---:|---|",
-            "| Раунд 1 | — | — | — | — | — | — |",
-            "",
-        ]
-
-    return [
-        "## Параметры прогона",
+def table_block(
+    title: str,
+    rows: list[tuple[str, str]],
+    targets: dict[str, str],
+    run_values: list[dict[str, str]],
+) -> list[str]:
+    run_headers = [f"Раунд {index}" for index in range(1, len(run_values) + 1)]
+    header = ["Критерий", "Цель", "Baseline", *run_headers]
+    separator = ["---", "---:", "---:", *(["---:"] * len(run_values))]
+    lines = [
+        f"## {title}",
         "",
-        "| Прогон | Что изменили | Агент | Модель | Temperature | Top P | Режим |",
-        "|---|---|---|---|---:|---:|---|",
-        "| "
-        f"Раунд 1 (`{run['run_code']}`) | "
-        f"{run['change_summary'] or '—'} | "
-        f"{compact_name_version(run['agent_name'], run['agent_version'])} | "
-        f"{compact_name_version(run['model_name'], run['model_version'])} | "
-        f"{run['temperature']} | "
-        f"{run['top_p']} | "
-        f"{run['run_mode']} |",
-        "",
+        "| " + " | ".join(header) + " |",
+        "| " + " | ".join(separator) + " |",
     ]
+    for code, name in rows:
+        values = [run_value.get(code, "—") for run_value in run_values]
+        lines.append(
+            "| "
+            + " | ".join([name, targets.get(code, "—"), "—", *values])
+            + " |"
+        )
+    lines.append("")
+    return lines
 
 
-def build_report(connection: sqlite3.Connection, round_1_code: str) -> str:
-    round_1 = run_by_code(connection, round_1_code)
-    round_1_id = str(round_1["id"]) if round_1 else ""
+def run_summary_table(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -> list[str]:
+    lines = [
+        "## Параметры прогонов",
+        "",
+        "| Раунд | Run code | ТК | Что изменили | Агент | Модель | Temperature | Top P | Режим |",
+        "|---:|---|---:|---|---|---|---:|---:|---|",
+    ]
+    if not runs:
+        lines.append("| 1 | — | — | — | — | — | — | — | — |")
+    for index, run in enumerate(runs, start=1):
+        lines.append(
+            "| "
+            f"{index} | "
+            f"`{run['run_code']}` | "
+            f"{generated_case_count(connection, run['id'])} | "
+            f"{run['change_summary'] or '—'} | "
+            f"{compact_name_version(run['agent_name'], run['agent_version'])} | "
+            f"{compact_name_version(run['model_name'], run['model_version'])} | "
+            f"{run['temperature']} | "
+            f"{run['top_p']} | "
+            f"{run['run_mode']} |"
+        )
+    lines.append("")
+    return lines
+
+
+def suite_rationale_block(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -> list[str]:
+    lines = [
+        "## Пояснения по оценкам набора",
+        "",
+        "| Раунд | Критерий | Score | Почему такая оценка |",
+        "|---:|---|---:|---|",
+    ]
+    for index, run in enumerate(runs, start=1):
+        rationales = suite_rationales(connection, run["id"])
+        for code, name in SUITE_ROWS:
+            if code not in rationales:
+                continue
+            score, rationale = rationales[code]
+            lines.append(f"| {index} | {name} | {score:.1f}/10 | {rationale} |")
+    lines.append("")
+    return lines
+
+
+def build_report(connection: sqlite3.Connection) -> str:
+    runs = eval_runs(connection)
 
     decomp_targets = target_map(connection, "requirement_decomposition_quality_criteria")
     suite_targets = target_map(connection, "test_suite_quality_criteria")
     tc_targets = target_map(connection, "test_case_quality_criteria")
 
-    baseline_empty: dict[str, str] = {}
-    round_2_empty: dict[str, str] = {}
-    round_1_decomp = decomposition_scores(connection, round_1_id) if round_1_id else {}
-    round_1_suite = suite_scores(connection, round_1_id) if round_1_id else {}
-    round_1_tc = test_case_average_scores(connection, round_1_id) if round_1_id else {}
+    run_decomp = [decomposition_scores(connection, run["id"]) for run in runs]
+    run_suite = [suite_scores(connection, run["id"]) for run in runs]
+    run_tc = [test_case_average_scores(connection, run["id"]) for run in runs]
 
     lines = [
         "# Отчет по eval-прогонам",
         "",
-        "Формат отчета: цели берутся из БД, `Раунд 1` сейчас соответствует демо-прогону `v1`.",
-        "Декомпозиция в `v1` не передавалась, поэтому ее критерии пока не измерялись.",
+        "Формат отчета: цели берутся из БД, колонки раундов строятся нарастающим итогом по таблице `eval_runs`.",
+        "Декомпозиция требований в импортированных Excel-раундах не передавалась, поэтому ее критерии пока не измерялись.",
         "",
     ]
-    lines.extend(run_summary_table(round_1))
+    lines.extend(run_summary_table(connection, runs))
     lines.extend(
         table_block(
             "1. Декомпозиция требований",
             DECOMPOSITION_ROWS,
             decomp_targets,
-            baseline_empty,
-            round_1_decomp,
-            round_2_empty,
+            run_decomp,
         )
     )
     lines.extend(
@@ -203,9 +241,7 @@ def build_report(connection: sqlite3.Connection, round_1_code: str) -> str:
             "2. Набор ТК",
             SUITE_ROWS,
             suite_targets,
-            baseline_empty,
-            round_1_suite,
-            round_2_empty,
+            run_suite,
         )
     )
     lines.extend(
@@ -213,16 +249,15 @@ def build_report(connection: sqlite3.Connection, round_1_code: str) -> str:
             "3. Отдельные ТК",
             TEST_CASE_ROWS,
             tc_targets,
-            baseline_empty,
-            round_1_tc,
-            round_2_empty,
+            run_tc,
         )
     )
+    lines.extend(suite_rationale_block(connection, runs))
     lines.extend(
         [
             "## Вердикт",
             "",
-            "Демо-прогон показывает, что механизм оценки работает: ТК импортированы, связаны с требованиями, оценки по критериям сохранены в БД и собираются в отчет. Для демонстрации достаточно; для приемки нужны ручная проверка спорных оценок, уточнение трассировки и последующий прогон с полной информацией об агенте, промпте и декомпозиции.",
+            "Механизм оценки работает на нескольких раундах: каждый прогон хранится отдельно, сгенерированные ТК связаны с требованиями, оценки сохранены по критериям и собираются в нарастающий отчет. Оценки являются демо-разметкой Codex и требуют ручного ревью перед управленческим решением.",
             "",
         ]
     )
@@ -233,11 +268,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build an eval rounds report from SQLite.")
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--round-1", default="v1")
     args = parser.parse_args()
 
     with connect(args.db) as connection:
-        report = build_report(connection, args.round_1)
+        report = build_report(connection)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(report, encoding="utf-8")
