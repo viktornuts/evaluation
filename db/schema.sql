@@ -14,25 +14,25 @@ CREATE TABLE IF NOT EXISTS eval_runs (
     id TEXT PRIMARY KEY,
     dataset_id TEXT NOT NULL,
     run_code TEXT NOT NULL,
-    agent_name TEXT,
-    agent_version TEXT,
-    agent_build TEXT,
-    agent_config_json TEXT,
-    prompt_name TEXT,
-    prompt_version TEXT,
+    agent_name TEXT NOT NULL CHECK (length(trim(agent_name)) > 0),
+    agent_version TEXT NOT NULL CHECK (length(trim(agent_version)) > 0),
     prompt_snapshot TEXT NOT NULL CHECK (length(trim(prompt_snapshot)) > 0),
-    model_provider TEXT,
     model_name TEXT NOT NULL CHECK (length(trim(model_name)) > 0),
     model_version TEXT NOT NULL CHECK (length(trim(model_version)) > 0),
     temperature REAL NOT NULL CHECK (temperature >= 0),
     top_p REAL NOT NULL CHECK (top_p >= 0 AND top_p <= 1),
-    code_version TEXT,
+    run_mode TEXT NOT NULL DEFAULT 'direct_extraction'
+        CHECK (run_mode IN ('direct_extraction', 'rag_search', 'hybrid')),
+    retrieval_chunk_size INTEGER CHECK (retrieval_chunk_size IS NULL OR retrieval_chunk_size > 0),
+    retrieval_top_k INTEGER CHECK (retrieval_top_k IS NULL OR retrieval_top_k >= 0),
+    reranker_name TEXT,
+    response_format_strictness TEXT NOT NULL DEFAULT 'strict'
+        CHECK (response_format_strictness IN ('strict', 'medium', 'freeform')),
+    response_contract_json TEXT,
     dataset_version TEXT,
-    run_config_json TEXT,
     started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     finished_at TEXT,
     status TEXT NOT NULL DEFAULT 'started',
-    metadata_json TEXT,
     FOREIGN KEY (dataset_id) REFERENCES datasets(id) ON DELETE CASCADE,
     UNIQUE (dataset_id, run_code)
 );
@@ -485,7 +485,8 @@ CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_case_id ON test_suite_q
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_requirement_id ON test_suite_quality_assessments(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_suite_quality_assessments_run_id ON test_suite_quality_assessments(eval_run_id);
 CREATE INDEX IF NOT EXISTS idx_eval_runs_agent ON eval_runs(agent_name, agent_version);
-CREATE INDEX IF NOT EXISTS idx_eval_runs_model ON eval_runs(model_provider, model_name, model_version);
+CREATE INDEX IF NOT EXISTS idx_eval_runs_model ON eval_runs(model_name, model_version);
+CREATE INDEX IF NOT EXISTS idx_eval_runs_mode ON eval_runs(run_mode);
 CREATE INDEX IF NOT EXISTS idx_req_tc_req_id ON requirement_test_case_links(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_tc_tc_id ON requirement_test_case_links(test_case_id);
 CREATE INDEX IF NOT EXISTS idx_step_req_step_id ON test_case_step_requirement_links(test_case_step_id);

@@ -71,7 +71,9 @@ datasets
 
 External reviews never overwrite the primary human/project assessments. They store an independent second opinion and disagreement comments.
 
-`eval_runs` stores an agent run against a dataset. It fixes the agent name/version/build, model provider/name/version, prompt name/version/text snapshot, generation settings such as `temperature` and `top_p`, and JSON fields for additional agent or run configuration. Generated requirements, generated test cases, suite assessments, and evaluation results can link back to the exact run through `eval_run_id`. `prompt_snapshot`, `model_name`, `model_version`, `temperature`, and `top_p` are required for every run because the result is not reproducible without them.
+`eval_runs` stores an agent run against a dataset. It fixes the factors we can tune between runs: agent name/version, prompt text with examples, model name/version, `temperature`, `top_p`, run mode, retrieval parameters, reranker, response format strictness, and dataset version snapshot. Generated requirements, generated test cases, suite assessments, and evaluation results can link back to the exact run through `eval_run_id`.
+
+Required run fields are `agent_name`, `agent_version`, `prompt_snapshot`, `model_name`, `model_version`, `temperature`, `top_p`, `run_mode`, and `response_format_strictness`. `retrieval_chunk_size`, `retrieval_top_k`, and `reranker_name` are used when `run_mode` is `rag_search` or `hybrid`.
 
 `input_requirements` stores large source requirements before agent decomposition. `input_requirement_decomposition_links` connects each large input requirement to expected or generated atomic requirements in `requirements`. `requirement_decomposition_evaluation_results` stores comparison results between generated atomic requirements and the expected decomposition.
 
