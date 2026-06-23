@@ -124,6 +124,40 @@ def upsert_sources(connection: sqlite3.Connection, case_id: str, sources: list[d
             )
 
 
+def upsert_input_requirements(
+    connection: sqlite3.Connection, case_id: str, input_requirements: list[dict[str, Any]]
+) -> None:
+    for requirement in input_requirements:
+        connection.execute(
+            """
+            INSERT INTO input_requirements (
+                id, dataset_case_id, input_requirement_code, title, requirement_text,
+                source_fragment_id, requirement_order
+            )
+            VALUES (
+                :id, :dataset_case_id, :input_requirement_code, :title, :requirement_text,
+                :source_fragment_id, :requirement_order
+            )
+            ON CONFLICT(id) DO UPDATE SET
+                dataset_case_id = excluded.dataset_case_id,
+                input_requirement_code = excluded.input_requirement_code,
+                title = excluded.title,
+                requirement_text = excluded.requirement_text,
+                source_fragment_id = excluded.source_fragment_id,
+                requirement_order = excluded.requirement_order
+            """,
+            {
+                "id": requirement["id"],
+                "dataset_case_id": case_id,
+                "input_requirement_code": requirement["input_requirement_code"],
+                "title": requirement.get("title"),
+                "requirement_text": requirement["requirement_text"],
+                "source_fragment_id": requirement.get("source_fragment_id"),
+                "requirement_order": requirement.get("requirement_order"),
+            },
+        )
+
+
 def upsert_requirements(connection: sqlite3.Connection, case_id: str, requirements: list[dict[str, Any]]) -> None:
     for requirement in requirements:
         connection.execute(
@@ -200,6 +234,27 @@ def upsert_requirements(connection: sqlite3.Connection, case_id: str, requiremen
                     "confidence": assessment.get("confidence"),
                 },
             )
+
+
+def upsert_input_requirement_decomposition_links(
+    connection: sqlite3.Connection, links: list[dict[str, Any]]
+) -> None:
+    for link in links:
+        connection.execute(
+            """
+            INSERT OR REPLACE INTO input_requirement_decomposition_links (
+                id, input_requirement_id, requirement_id, link_type, rationale
+            )
+            VALUES (:id, :input_requirement_id, :requirement_id, :link_type, :rationale)
+            """,
+            {
+                "id": link["id"],
+                "input_requirement_id": link["input_requirement_id"],
+                "requirement_id": link["requirement_id"],
+                "link_type": link.get("link_type", "expected_atomic_requirement"),
+                "rationale": link.get("rationale"),
+            },
+        )
 
 
 def upsert_test_cases(connection: sqlite3.Connection, case_id: str, test_cases: list[dict[str, Any]]) -> None:
@@ -337,7 +392,11 @@ def import_dataset(db_path: Path, input_path: Path) -> None:
         for case in payload.get("cases", []):
             upsert_case(connection, payload["dataset"]["id"], case)
             upsert_sources(connection, case["id"], case.get("source_materials", []))
+            upsert_input_requirements(connection, case["id"], case.get("input_requirements", []))
             upsert_requirements(connection, case["id"], case.get("requirements", []))
+            upsert_input_requirement_decomposition_links(
+                connection, case.get("input_requirement_decomposition_links", [])
+            )
             upsert_test_cases(connection, case["id"], case.get("test_cases", []))
             upsert_requirement_test_case_links(connection, case.get("requirement_test_case_links", []))
             upsert_unsupported_details(connection, case.get("unsupported_details", []))

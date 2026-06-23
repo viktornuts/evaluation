@@ -72,6 +72,20 @@ CREATE TABLE IF NOT EXISTS source_fragments (
     UNIQUE (source_material_id, fragment_ref)
 );
 
+CREATE TABLE IF NOT EXISTS input_requirements (
+    id TEXT PRIMARY KEY,
+    dataset_case_id TEXT NOT NULL,
+    input_requirement_code TEXT NOT NULL,
+    title TEXT,
+    requirement_text TEXT NOT NULL,
+    source_fragment_id TEXT,
+    requirement_order INTEGER,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (source_fragment_id) REFERENCES source_fragments(id) ON DELETE SET NULL,
+    UNIQUE (dataset_case_id, input_requirement_code)
+);
+
 CREATE TABLE IF NOT EXISTS requirements (
     id TEXT PRIMARY KEY,
     dataset_case_id TEXT NOT NULL,
@@ -88,6 +102,42 @@ CREATE TABLE IF NOT EXISTS requirements (
     FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
     FOREIGN KEY (eval_run_id) REFERENCES eval_runs(id) ON DELETE SET NULL,
     UNIQUE (dataset_case_id, requirement_code, origin)
+);
+
+CREATE TABLE IF NOT EXISTS input_requirement_decomposition_links (
+    id TEXT PRIMARY KEY,
+    input_requirement_id TEXT NOT NULL,
+    requirement_id TEXT NOT NULL,
+    link_type TEXT NOT NULL DEFAULT 'expected_atomic_requirement',
+    rationale TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (input_requirement_id) REFERENCES input_requirements(id) ON DELETE CASCADE,
+    FOREIGN KEY (requirement_id) REFERENCES requirements(id) ON DELETE CASCADE,
+    UNIQUE (input_requirement_id, requirement_id, link_type)
+);
+
+CREATE TABLE IF NOT EXISTS requirement_decomposition_evaluation_results (
+    id TEXT PRIMARY KEY,
+    eval_run_id TEXT NOT NULL,
+    dataset_case_id TEXT NOT NULL,
+    input_requirement_id TEXT NOT NULL,
+    generated_requirement_id TEXT,
+    matched_expected_requirement_id TEXT,
+    match_status TEXT NOT NULL DEFAULT 'not_evaluated',
+    boundary_status TEXT NOT NULL DEFAULT 'not_evaluated',
+    traceability_status TEXT NOT NULL DEFAULT 'not_evaluated',
+    unsupported_detail_count INTEGER NOT NULL DEFAULT 0,
+    score REAL CHECK (score IS NULL OR (score BETWEEN 0 AND 10)),
+    severity TEXT NOT NULL DEFAULT 'info',
+    evaluator_name TEXT NOT NULL DEFAULT 'unknown',
+    evaluator_type TEXT NOT NULL DEFAULT 'manual',
+    rationale TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (eval_run_id) REFERENCES eval_runs(id) ON DELETE CASCADE,
+    FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (input_requirement_id) REFERENCES input_requirements(id) ON DELETE CASCADE,
+    FOREIGN KEY (generated_requirement_id) REFERENCES requirements(id) ON DELETE CASCADE,
+    FOREIGN KEY (matched_expected_requirement_id) REFERENCES requirements(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS requirement_source_links (
@@ -368,7 +418,14 @@ CREATE TABLE IF NOT EXISTS external_test_case_reviews (
 CREATE INDEX IF NOT EXISTS idx_dataset_cases_dataset_id ON dataset_cases(dataset_id);
 CREATE INDEX IF NOT EXISTS idx_sources_case_id ON source_materials(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_fragments_source_id ON source_fragments(source_material_id);
+CREATE INDEX IF NOT EXISTS idx_input_requirements_case_id ON input_requirements(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_requirements_case_id ON requirements(dataset_case_id);
+CREATE INDEX IF NOT EXISTS idx_input_req_decomp_input_id ON input_requirement_decomposition_links(input_requirement_id);
+CREATE INDEX IF NOT EXISTS idx_input_req_decomp_req_id ON input_requirement_decomposition_links(requirement_id);
+CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_run_id ON requirement_decomposition_evaluation_results(eval_run_id);
+CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_input_id ON requirement_decomposition_evaluation_results(input_requirement_id);
+CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_generated_req_id ON requirement_decomposition_evaluation_results(generated_requirement_id);
+CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_expected_req_id ON requirement_decomposition_evaluation_results(matched_expected_requirement_id);
 CREATE INDEX IF NOT EXISTS idx_requirement_source_req_id ON requirement_source_links(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_quality_score_levels_criterion_id ON requirement_quality_criterion_score_levels(criterion_id);
 CREATE INDEX IF NOT EXISTS idx_requirement_quality_req_id ON requirement_quality_assessments(requirement_id);

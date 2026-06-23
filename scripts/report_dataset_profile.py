@@ -28,11 +28,13 @@ def report(db_path: Path) -> None:
                 d.name AS dataset,
                 d.version,
                 COUNT(DISTINCT dc.id) AS cases,
+                COUNT(DISTINCT ir.id) AS input_requirements,
                 COUNT(DISTINCT r.id) AS requirements,
                 COUNT(DISTINCT tc.id) AS test_cases,
                 COUNT(DISTINCT tcs.id) AS test_case_steps
             FROM datasets d
             LEFT JOIN dataset_cases dc ON dc.dataset_id = d.id
+            LEFT JOIN input_requirements ir ON ir.dataset_case_id = dc.id
             LEFT JOIN requirements r ON r.dataset_case_id = dc.id
             LEFT JOIN test_cases tc ON tc.dataset_case_id = dc.id
             LEFT JOIN test_case_steps tcs ON tcs.test_case_id = tc.id
@@ -54,6 +56,25 @@ def report(db_path: Path) -> None:
             """
         ).fetchall()
         print_rows("Dataset case input profiles", input_profiles)
+
+        decomposition_profile = connection.execute(
+            """
+            SELECT
+                dc.case_code,
+                COUNT(DISTINCT ir.id) AS input_requirements,
+                COUNT(DISTINCT irdl.id) AS decomposition_links,
+                COUNT(DISTINCT CASE WHEN irdl.link_type = 'expected_atomic_requirement' THEN irdl.id END)
+                    AS expected_decomposition_links,
+                COUNT(DISTINCT CASE WHEN irdl.link_type = 'generated_atomic_requirement' THEN irdl.id END)
+                    AS generated_decomposition_links
+            FROM dataset_cases dc
+            LEFT JOIN input_requirements ir ON ir.dataset_case_id = dc.id
+            LEFT JOIN input_requirement_decomposition_links irdl ON irdl.input_requirement_id = ir.id
+            GROUP BY dc.id
+            ORDER BY dc.case_code
+            """
+        ).fetchall()
+        print_rows("Requirement decomposition profile", decomposition_profile)
 
         statuses = connection.execute(
             """

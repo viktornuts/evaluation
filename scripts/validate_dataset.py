@@ -57,6 +57,25 @@ def validate(db_path: Path) -> list[str]:
 
         rows = connection.execute(
             """
+            SELECT ir.input_requirement_code, dc.case_code
+            FROM input_requirements ir
+            JOIN dataset_cases dc ON dc.id = ir.dataset_case_id
+            LEFT JOIN input_requirement_decomposition_links irdl
+                ON irdl.input_requirement_id = ir.id
+                AND irdl.link_type = 'expected_atomic_requirement'
+            GROUP BY ir.id
+            HAVING COUNT(irdl.id) = 0
+            ORDER BY dc.case_code, ir.input_requirement_code
+            """
+        ).fetchall()
+        for row in rows:
+            issues.append(
+                f"{row['case_code']} / {row['input_requirement_code']}: "
+                "has no expected decomposition link"
+            )
+
+        rows = connection.execute(
+            """
             SELECT tc.test_case_code, dc.case_code
             FROM test_cases tc
             JOIN dataset_cases dc ON dc.id = tc.dataset_case_id

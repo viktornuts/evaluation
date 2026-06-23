@@ -49,9 +49,12 @@ datasets
     -> input_profile_code / input_profile_name
     -> source_materials
       -> source_fragments
+    -> input_requirements
+      -> input_requirement_decomposition_links
     -> requirements
       -> requirement_source_links
       -> requirement_quality_assessments
+    -> requirement_decomposition_evaluation_results
     -> test_cases
       -> test_case_steps
       -> test_case_quality_assessments
@@ -68,6 +71,8 @@ datasets
 External reviews never overwrite the primary human/project assessments. They store an independent second opinion and disagreement comments.
 
 `eval_runs` stores an agent run against a dataset. It fixes the agent name/version/build, model provider/name/version, prompt name/version/text snapshot, generation settings such as `temperature` and `top_p`, and JSON fields for additional agent or run configuration. Generated requirements, generated test cases, suite assessments, and evaluation results can link back to the exact run through `eval_run_id`. `prompt_snapshot`, `model_name`, `model_version`, `temperature`, and `top_p` are required for every run because the result is not reproducible without them.
+
+`input_requirements` stores large source requirements before agent decomposition. `input_requirement_decomposition_links` connects each large input requirement to expected or generated atomic requirements in `requirements`. `requirement_decomposition_evaluation_results` stores comparison results between generated atomic requirements and the expected decomposition.
 
 `test_cases` stores the test case artifact itself. `test_case_evaluation_results` stores the result of checking a generated test case against the expected dataset, including match, structure, classification, hallucination, unsupported detail count, score, and rationale.
 

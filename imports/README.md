@@ -21,7 +21,9 @@ The current MVP importer accepts one JSON file with this shape:
       "input_profile_code": "complete_technical_docs",
       "input_profile_name": "Structured and complete technical documentation",
       "source_materials": [],
+      "input_requirements": [],
       "requirements": [],
+      "input_requirement_decomposition_links": [],
       "test_cases": [],
       "requirement_test_case_links": [],
       "unsupported_details": []
@@ -29,6 +31,19 @@ The current MVP importer accepts one JSON file with this shape:
   ]
 }
 ```
+
+`input_requirements` stores the large source requirements before decomposition. Use it when the agent first splits a source requirement into smaller atomic requirements. Each item should contain:
+
+- `id`;
+- `input_requirement_code`;
+- `requirement_text`;
+- optional `title`;
+- optional `source_fragment_id`;
+- optional `requirement_order`.
+
+`requirements` stores the expected or generated atomic requirements after decomposition.
+
+`input_requirement_decomposition_links` connects one large input requirement to its atomic requirements. Use `link_type = expected_atomic_requirement` for the gold decomposition and `link_type = generated_atomic_requirement` for agent output.
 
 Each expected requirement should have:
 

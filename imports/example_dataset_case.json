@@ -39,6 +39,24 @@
           ]
         }
       ],
+      "input_requirements": [
+        {
+          "id": "input_req_fr1_password_recovery",
+          "input_requirement_code": "FR-1",
+          "title": "Password recovery source requirement",
+          "requirement_text": "User can recover a password by email. The system sends a recovery link to a confirmed email.",
+          "source_fragment_id": "frag_password_recovery_email",
+          "requirement_order": 1
+        },
+        {
+          "id": "input_req_fr2_fast_processing",
+          "input_requirement_code": "FR-2",
+          "title": "Fast processing source requirement",
+          "requirement_text": "The system must process requests quickly.",
+          "source_fragment_id": "frag_fast_processing",
+          "requirement_order": 2
+        }
+      ],
       "requirements": [
         {
           "id": "req_password_recovery_email",
@@ -260,6 +278,22 @@
               "assessment_method": "human"
             }
           ]
+        }
+      ],
+      "input_requirement_decomposition_links": [
+        {
+          "id": "decomp_fr1_req001",
+          "input_requirement_id": "input_req_fr1_password_recovery",
+          "requirement_id": "req_password_recovery_email",
+          "link_type": "expected_atomic_requirement",
+          "rationale": "REQ-001 is the expected atomic requirement derived from FR-1."
+        },
+        {
+          "id": "decomp_fr2_req002",
+          "input_requirement_id": "input_req_fr2_fast_processing",
+          "requirement_id": "req_fast_processing",
+          "link_type": "expected_atomic_requirement",
+          "rationale": "REQ-002 is the expected atomic requirement derived from FR-2."
         }
       ],
       "test_cases": [
