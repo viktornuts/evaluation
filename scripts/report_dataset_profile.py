@@ -76,6 +76,21 @@ def report(db_path: Path) -> None:
         ).fetchall()
         print_rows("Requirement decomposition profile", decomposition_profile)
 
+        decomposition_quality = connection.execute(
+            """
+            SELECT
+                rdqc.code AS criterion,
+                rdqa.label,
+                COUNT(*) AS count,
+                ROUND(AVG(rdqa.score), 2) AS avg_score
+            FROM requirement_decomposition_quality_assessments rdqa
+            JOIN requirement_decomposition_quality_criteria rdqc ON rdqc.id = rdqa.criterion_id
+            GROUP BY rdqc.code, rdqa.label
+            ORDER BY rdqc.code, count DESC, rdqa.label
+            """
+        ).fetchall()
+        print_rows("Requirement decomposition quality assessments", decomposition_quality)
+
         statuses = connection.execute(
             """
             SELECT expected_status, COUNT(*) AS count

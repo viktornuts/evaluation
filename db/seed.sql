@@ -1,3 +1,32 @@
+INSERT OR IGNORE INTO requirement_decomposition_quality_criteria (id, code, name, description, scale_min, scale_max)
+VALUES
+    ('decomp_crit_completeness', 'decomposition_completeness', 'Полнота декомпозиции', 'Насколько все значимые атомарные требования из входного требования выделены в результате декомпозиции.', 0, 10),
+    ('decomp_crit_boundaries', 'decomposition_boundaries', 'Границы атомарных требований', 'Насколько корректно определены границы атомарных требований: без склеивания независимых требований и без бессмысленного дробления.', 0, 10),
+    ('decomp_crit_consolidation', 'requirement_consolidation', 'Консолидация требований', 'Насколько одинаковая или связанная информация из разных источников объединена корректно, без дублей, потери смысла и противоречий.', 0, 10);
+
+INSERT OR IGNORE INTO requirement_decomposition_quality_criterion_score_levels (id, criterion_id, score_min, score_max, label, description)
+VALUES
+    ('decomp_qsl_completeness_10', 'decomp_crit_completeness', 10, 10, 'complete_decomposition', 'Все значимые атомарные требования из входного требования выделены, потерь нет.'),
+    ('decomp_qsl_completeness_8_9', 'decomp_crit_completeness', 8, 9, 'mostly_complete_decomposition', 'Почти все значимые атомарные требования выделены, есть только minor-пропуски.'),
+    ('decomp_qsl_completeness_6_7', 'decomp_crit_completeness', 6, 7, 'partly_complete_decomposition', 'Выделена основная часть атомарных требований, но есть заметные пропуски.'),
+    ('decomp_qsl_completeness_4_5', 'decomp_crit_completeness', 4, 5, 'weak_decomposition_completeness', 'Потеряна существенная часть требований или важных ограничений.'),
+    ('decomp_qsl_completeness_1_3', 'decomp_crit_completeness', 1, 3, 'poor_decomposition_completeness', 'Выделены единичные требования, большая часть смысла входного требования потеряна.'),
+    ('decomp_qsl_completeness_0', 'decomp_crit_completeness', 0, 0, 'no_decomposition', 'Декомпозиция отсутствует или не отражает входное требование.'),
+
+    ('decomp_qsl_boundaries_10', 'decomp_crit_boundaries', 10, 10, 'correct_boundaries', 'Атомарные требования выделены самостоятельными проверяемыми единицами с корректными границами.'),
+    ('decomp_qsl_boundaries_8_9', 'decomp_crit_boundaries', 8, 9, 'mostly_correct_boundaries', 'Границы в целом корректны, есть minor-спорные разделения или объединения.'),
+    ('decomp_qsl_boundaries_6_7', 'decomp_crit_boundaries', 6, 7, 'partly_correct_boundaries', 'Часть требований нарезана корректно, но есть заметные случаи склейки или избыточного дробления.'),
+    ('decomp_qsl_boundaries_4_5', 'decomp_crit_boundaries', 4, 5, 'weak_boundaries', 'Границы часто нарушены: независимые требования склеены или атомарность потеряна.'),
+    ('decomp_qsl_boundaries_1_3', 'decomp_crit_boundaries', 1, 3, 'poor_boundaries', 'Декомпозиция в основном состоит из некорректно нарезанных или несамостоятельных фрагментов.'),
+    ('decomp_qsl_boundaries_0', 'decomp_crit_boundaries', 0, 0, 'invalid_boundaries', 'Границы требований не определены или декомпозиция непригодна.'),
+
+    ('decomp_qsl_consolidation_10', 'decomp_crit_consolidation', 10, 10, 'correct_consolidation', 'Одинаковая или связанная информация из разных источников объединена корректно, без дублей и противоречий.'),
+    ('decomp_qsl_consolidation_8_9', 'decomp_crit_consolidation', 8, 9, 'mostly_correct_consolidation', 'Консолидация в целом корректна, есть minor-дубли или minor-потери контекста.'),
+    ('decomp_qsl_consolidation_6_7', 'decomp_crit_consolidation', 6, 7, 'partly_correct_consolidation', 'Часть связанной информации объединена корректно, часть продублирована или требует ревью.'),
+    ('decomp_qsl_consolidation_4_5', 'decomp_crit_consolidation', 4, 5, 'weak_consolidation', 'Есть заметные дубли, несогласованные формулировки или потеря связей между источниками.'),
+    ('decomp_qsl_consolidation_1_3', 'decomp_crit_consolidation', 1, 3, 'poor_consolidation', 'Модель почти не консолидирует связанные требования и плодит дубли или конфликтующие варианты.'),
+    ('decomp_qsl_consolidation_0', 'decomp_crit_consolidation', 0, 0, 'no_consolidation', 'Консолидация отсутствует или результат вводит в заблуждение.');
+
 INSERT OR IGNORE INTO requirement_quality_criteria (id, code, name, description, scale_min, scale_max)
 VALUES
     ('crit_source_quality', 'source_quality', 'Источник требований', 'Надежность и пригодность источника требования: первичный источник, вторичный источник, устное уточнение, неясный источник.', 0, 10),

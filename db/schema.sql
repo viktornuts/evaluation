@@ -140,6 +140,45 @@ CREATE TABLE IF NOT EXISTS requirement_decomposition_evaluation_results (
     FOREIGN KEY (matched_expected_requirement_id) REFERENCES requirements(id) ON DELETE SET NULL
 );
 
+CREATE TABLE IF NOT EXISTS requirement_decomposition_quality_criteria (
+    id TEXT PRIMARY KEY,
+    code TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT,
+    scale_min INTEGER NOT NULL DEFAULT 0,
+    scale_max INTEGER NOT NULL DEFAULT 10,
+    is_active INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS requirement_decomposition_quality_criterion_score_levels (
+    id TEXT PRIMARY KEY,
+    criterion_id TEXT NOT NULL,
+    score_min INTEGER NOT NULL CHECK (score_min BETWEEN 0 AND 10),
+    score_max INTEGER NOT NULL CHECK (score_max BETWEEN 0 AND 10),
+    label TEXT NOT NULL,
+    description TEXT NOT NULL,
+    FOREIGN KEY (criterion_id) REFERENCES requirement_decomposition_quality_criteria(id) ON DELETE CASCADE,
+    CHECK (score_min <= score_max),
+    UNIQUE (criterion_id, score_min, score_max)
+);
+
+CREATE TABLE IF NOT EXISTS requirement_decomposition_quality_assessments (
+    id TEXT PRIMARY KEY,
+    decomposition_evaluation_result_id TEXT NOT NULL,
+    criterion_id TEXT NOT NULL,
+    score REAL NOT NULL CHECK (score BETWEEN 0 AND 10),
+    label TEXT NOT NULL,
+    rationale TEXT,
+    assessed_by TEXT NOT NULL DEFAULT 'unknown',
+    assessment_method TEXT NOT NULL DEFAULT 'human',
+    confidence REAL CHECK (confidence IS NULL OR (confidence >= 0 AND confidence <= 1)),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (decomposition_evaluation_result_id)
+        REFERENCES requirement_decomposition_evaluation_results(id) ON DELETE CASCADE,
+    FOREIGN KEY (criterion_id) REFERENCES requirement_decomposition_quality_criteria(id) ON DELETE RESTRICT,
+    UNIQUE (decomposition_evaluation_result_id, criterion_id)
+);
+
 CREATE TABLE IF NOT EXISTS requirement_source_links (
     id TEXT PRIMARY KEY,
     requirement_id TEXT NOT NULL,
@@ -426,6 +465,12 @@ CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_run_id ON requirement_decompositi
 CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_input_id ON requirement_decomposition_evaluation_results(input_requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_generated_req_id ON requirement_decomposition_evaluation_results(generated_requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_decomp_eval_expected_req_id ON requirement_decomposition_evaluation_results(matched_expected_requirement_id);
+CREATE INDEX IF NOT EXISTS idx_req_decomp_quality_score_levels_criterion_id
+    ON requirement_decomposition_quality_criterion_score_levels(criterion_id);
+CREATE INDEX IF NOT EXISTS idx_req_decomp_quality_assessments_result_id
+    ON requirement_decomposition_quality_assessments(decomposition_evaluation_result_id);
+CREATE INDEX IF NOT EXISTS idx_req_decomp_quality_assessments_criterion_id
+    ON requirement_decomposition_quality_assessments(criterion_id);
 CREATE INDEX IF NOT EXISTS idx_requirement_source_req_id ON requirement_source_links(requirement_id);
 CREATE INDEX IF NOT EXISTS idx_req_quality_score_levels_criterion_id ON requirement_quality_criterion_score_levels(criterion_id);
 CREATE INDEX IF NOT EXISTS idx_requirement_quality_req_id ON requirement_quality_assessments(requirement_id);
