@@ -9,12 +9,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "cpt_eval.sqlite"
 SOURCE_PATH = ROOT / "imports" / "round_v1_generated_test_cases.txt"
-REPORT_PATH = ROOT / "exports" / "round_v1_assessment.md"
+REPORT_PATH = ROOT / "exports" / "round_v0_assessment.md"
 
 DATASET_ID = "dataset_customer_gold_v1"
 DATASET_CASE_ID = "case_customer_gold_release_integration"
-EVAL_RUN_ID = "eval_run_v1_demo"
-RUN_CODE = "v1"
+EVAL_RUN_ID = "eval_run_v0_text_demo"
+RUN_CODE = "v0"
 
 
 @dataclass
@@ -232,7 +232,7 @@ def parse_test_cases() -> list[GeneratedTestCase]:
         result.append(
             GeneratedTestCase(
                 source_id=source_id,
-                code=f"GEN-V1-TC-{index:03d}",
+                code=f"GEN-V0-TC-{index:03d}",
                 title=title,
                 priority=priority,
                 tags=tags,
@@ -264,7 +264,7 @@ def requirement_id(code: str) -> str:
 
 
 def test_case_id(code: str) -> str:
-    return f"gen_v1_{code.lower().replace('-', '_')}"
+    return f"gen_v0_{code.lower().replace('-', '_')}"
 
 
 def clean_previous_run(connection: sqlite3.Connection) -> None:
@@ -297,16 +297,16 @@ def insert_eval_run(connection: sqlite3.Connection) -> None:
             "id": EVAL_RUN_ID,
             "dataset_id": DATASET_ID,
             "run_code": RUN_CODE,
-            "agent_name": "v1",
-            "agent_version": "v1",
-            "prompt_snapshot": "v1",
-            "model_name": "v1",
-            "model_version": "v1",
+            "agent_name": "text_demo",
+            "agent_version": "v0",
+            "prompt_snapshot": "v0",
+            "model_name": "v0",
+            "model_version": "v0",
             "temperature": 0.0,
             "top_p": 1.0,
             "run_mode": "direct_extraction",
             "response_format_strictness": "freeform",
-            "change_summary": "Демо-прогон v1: доступны только сгенерированные ТК, без данных об агенте, промпте и декомпозиции.",
+            "change_summary": "Тестовый демо-прогон v0: человекочитаемый экспорт ТК, без полных данных об агенте, промпте и декомпозиции.",
             "dataset_version": "customer_gold_v1",
             "status": "completed",
         },
@@ -377,11 +377,11 @@ def insert_test_cases(connection: sqlite3.Connection, test_cases: list[Generated
                 VALUES (?, ?, ?, 'covered', ?, 1, ?, 'codex_demo_assessment', 'draft')
                 """,
                 (
-                    f"rtcl_gen_v1_{req_code.lower().replace('-', '_')}_{tc.code.lower().replace('-', '_')}",
+                    f"rtcl_gen_v0_{req_code.lower().replace('-', '_')}_{tc.code.lower().replace('-', '_')}",
                     requirement_id(req_code),
                     tc_id,
                     tc.direction,
-                    "Связь с требованием проставлена Codex для демонстрационной оценки v1.",
+                    "Связь с требованием проставлена Codex для демонстрационной оценки v0.",
                 ),
             )
         for criterion_code, (score, label, rationale) in tc.assessments.items():
@@ -461,9 +461,9 @@ def insert_suite_assessments(connection: sqlite3.Connection) -> None:
 def write_report(test_cases: list[GeneratedTestCase]) -> None:
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     lines = [
-        "# Демо-оценка прогона v1",
+        "# Демо-оценка тестового прогона v0",
         "",
-        "Данные об агенте, модели и промпте отсутствуют; в `eval_runs` проставлены заглушки `v1`.",
+        "Данные об агенте, модели и промпте отсутствуют; в `eval_runs` проставлены заглушки `v0`.",
         "",
         "## Сгенерированные ТК",
         "",
