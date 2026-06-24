@@ -512,14 +512,21 @@ def verdict_block(
 
     if overall_previous is not None and overall_current is not None:
         if overall_current > overall_previous:
+            improved_names = [item.split(":", 1)[0].lower() for item in improved]
+            driver_names = [name for name in improved_names if name != "общая полнота набора"]
+            if driver_names:
+                driver_text = " Рост обеспечен улучшением критериев: " + ", ".join(driver_names) + "."
+            else:
+                driver_text = ""
             if worsened:
                 worsened_names = ", ".join(item.split(":", 1)[0].lower() for item in worsened)
-                caveat = f"при отдельных просадках по критериям: {worsened_names}."
+                caveat = f" При этом есть ограничения: просели критерии {worsened_names}."
             else:
-                caveat = "без заметных просадок по измеряемым критериям."
+                caveat = " Заметных просадок по измеряемым критериям нет."
             lines.append(
-                f"В целом текущая версия выглядит лучше benchmark `{benchmark_run}`: набор стал более пригодным для использования, "
-                f"{caveat}"
+                f"В целом текущая версия выглядит лучше benchmark `{benchmark_run}`, потому что ключевой показатель выбора TOP benchmark "
+                f"— общая полнота набора — вырос с {overall_previous:.1f} до {overall_current:.1f}."
+                f"{driver_text}{caveat}"
             )
         elif overall_current < overall_previous:
             lines.append(
