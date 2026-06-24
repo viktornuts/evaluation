@@ -552,6 +552,20 @@ def suite_assessments(cases: list[GeneratedCase]) -> dict[str, tuple[float, str,
     if cleanliness_score < 4:
         overall_score = min(overall_score, 7.5)
 
+    unsupported_text = (
+        "1 ТК имеет заметный риск неподтвержденных деталей"
+        if unsupported_cases == 1
+        else f"{unsupported_cases} ТК имеют заметный риск неподтвержденных деталей"
+    )
+    cleanliness_reasons = [
+        f"В наборе {len(cases)} ТК",
+        unsupported_text,
+    ]
+    if len(cases) > 45:
+        cleanliness_reasons.append("размер набора выше 45 ТК создает высокий риск дублей и лишних проверок")
+    elif len(cases) > 30:
+        cleanliness_reasons.append("размер набора выше 30 ТК создает умеренный риск дублей и лишних проверок")
+
     return {
         "positive_coverage": (
             positive_score,
@@ -566,7 +580,7 @@ def suite_assessments(cases: list[GeneratedCase]) -> dict[str, tuple[float, str,
         "suite_cleanliness": (
             cleanliness_score,
             label_for_score("cleanliness", cleanliness_score),
-            f"В наборе {len(cases)} ТК; {unsupported_cases} ТК имеют заметный риск неподтвержденных деталей.",
+            "; ".join(cleanliness_reasons) + ".",
         ),
         "required_checks_coverage": (
             required_score,

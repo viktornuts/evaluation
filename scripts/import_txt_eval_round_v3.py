@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import re
 from pathlib import Path
 
@@ -17,19 +18,7 @@ from import_xlsx_eval_rounds import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_PATH = ROOT / "imports" / "rounds" / "v3" / "source" / "tc-export-326428.txt"
-REPORT_PATH = ROOT / "exports" / "rounds" / "v3" / "round_v3_assessment.md"
-
-RUN_CONFIG = {
-    "run_code": "v3",
-    "eval_run_id": "eval_run_v3_txt",
-    "source": SOURCE_PATH,
-    "agent": "v3",
-    "change_summary": (
-        "Раунд v3: импорт из txt-экспорта tc-export-326428, 43 сгенерированных ТК. "
-        "Файл версии агента, промпты и декомпозиция требований не переданы; параметры агента заполнены заглушками v3."
-    ),
-}
+DEFAULT_SOURCE_PATH = ROOT / "imports" / "rounds" / "v3" / "source" / "tc-export-326428.txt"
 
 
 def section_text(body: str, section: str, next_sections: list[str]) -> str:
@@ -92,7 +81,7 @@ def split_blocks(text: str) -> list[tuple[str, str]]:
     return [(parts[index].strip(), parts[index + 1]) for index in range(1, len(parts), 2)]
 
 
-def parse_cases(path: Path) -> list[GeneratedCase]:
+def parse_cases(path: Path, run_code: str) -> list[GeneratedCase]:
     text = path.read_text(encoding="utf-8")
     result: list[GeneratedCase] = []
     for index, (source_key, body) in enumerate(split_blocks(text), start=1):
@@ -124,7 +113,7 @@ def parse_cases(path: Path) -> list[GeneratedCase]:
         )
         case = GeneratedCase(
             source_key=source_key,
-            code=f"GEN-V3-TC-{index:03d}",
+            code=f"GEN-{run_code.upper()}-TC-{index:03d}",
             title=title,
             test_case_type=case_type,
             direction=direction,
@@ -168,16 +157,25 @@ def adjust_assessments(case: GeneratedCase) -> dict[str, tuple[float, str, str]]
     return assessments
 
 
-def write_round_report(cases: list[GeneratedCase]) -> None:
-    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+def write_round_report(config: dict[str, object], cases: list[GeneratedCase]) -> None:
+    run_code = str(config["run_code"])
+    source_path = Path(config["source"])
+    report_path = ROOT / "exports" / "rounds" / run_code / f"round_{run_code}_assessment.md"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     suite = suite_assessments(cases)
+    has_only_ai_gen_tags = all(set(tag.lower() for tag in case.tags) <= {"ai_gen", case.test_case_type.lower(), case.direction} for case in cases)
+    tag_note = (
+        "Метки экспорта содержат только `AI_gen`, поэтому вид и направление ТК определены эвристически по названию и шагам."
+        if has_only_ai_gen_tags
+        else "Вид и направление ТК определены по меткам экспорта и содержанию шагов."
+    )
     lines = [
-        "# Демо-оценка прогона v3",
+        f"# Демо-оценка прогона {run_code}",
         "",
-        "Источник: `tc-export-326428.txt`.",
+        f"Источник: `{source_path.name}`.",
         f"Импортировано ТК: {len(cases)}.",
-        "Файл версии агента, промпты и декомпозиция требований не переданы; в `eval_runs` проставлены заглушки `v3`.",
-        "Метки экспорта содержат только `AI_gen`, поэтому вид и направление ТК определены эвристически по названию и шагам.",
+        f"Файл версии агента, промпты и декомпозиция требований не переданы; в `eval_runs` проставлены заглушки `{run_code}`.",
+        tag_note,
         "",
         "## Оценка набора",
         "",
@@ -201,20 +199,44 @@ def write_round_report(cases: list[GeneratedCase]) -> None:
             f"| `{case.code}` | `{case.source_key}` | {case.test_case_type} | {case.direction} | "
             f"{', '.join(case.requirement_codes)} | {avg:.1f} | {case.title} |"
         )
-    REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"Wrote {report_path}")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Import a txt eval round with human-readable generated test cases.")
+    parser.add_argument("--run-code", default="v3")
+    parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE_PATH)
+    return parser.parse_args()
+
+
+def build_config(run_code: str, source_path: Path, case_count: int) -> dict[str, object]:
+    return {
+        "run_code": run_code,
+        "eval_run_id": f"eval_run_{run_code}_txt",
+        "source": source_path,
+        "agent": run_code,
+        "change_summary": (
+            f"Раунд {run_code}: импорт из txt-экспорта {source_path.name}, {case_count} сгенерированных ТК. "
+            f"Файл версии агента, промпты и декомпозиция требований не переданы; параметры агента заполнены заглушками {run_code}."
+        ),
+    }
 
 
 def main() -> None:
-    cases = parse_cases(SOURCE_PATH)
+    args = parse_args()
+    source_path = args.source if args.source.is_absolute() else ROOT / args.source
+    run_code = str(args.run_code)
+    cases = parse_cases(source_path, run_code)
+    config = build_config(run_code, source_path, len(cases))
     with connect() as connection:
-        clean_previous_run(connection, "v3")
-        insert_eval_run(connection, RUN_CONFIG)
-        insert_cases(connection, RUN_CONFIG, cases)
-        insert_suite_assessments(connection, RUN_CONFIG, cases)
+        clean_previous_run(connection, run_code)
+        insert_eval_run(connection, config)
+        insert_cases(connection, config, cases)
+        insert_suite_assessments(connection, config, cases)
         connection.commit()
-    write_round_report(cases)
-    print(f"Imported {len(cases)} generated test cases for run v3.")
-    print(f"Wrote {REPORT_PATH}")
+    write_round_report(config, cases)
+    print(f"Imported {len(cases)} generated test cases for run {run_code}.")
 
 
 if __name__ == "__main__":
