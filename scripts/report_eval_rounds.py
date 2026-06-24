@@ -202,10 +202,12 @@ def decomposition_conclusion_block(runs: list[sqlite3.Row]) -> list[str]:
     if not runs:
         lines.append("Данных по прогонам пока нет.")
     else:
+        current_run = runs[-1]["run_code"]
         lines.append(
-            "В текущих раундах на вход отчета передавались только сгенерированные тест-кейсы. "
-            "Результат декомпозиции требований от агента не импортировался, поэтому критерии "
-            "`decomposition_completeness`, `decomposition_boundaries` и `requirement_consolidation` пока не измерялись."
+            f"Для текущего раунда `{current_run}` результат декомпозиции требований от агента не импортировался. "
+            "На вход отчета передавались только сгенерированные тест-кейсы. "
+            "Поэтому критерии `decomposition_completeness`, `decomposition_boundaries` "
+            "и `requirement_consolidation` пока не измерялись."
         )
     lines.append("")
     return lines
@@ -244,13 +246,19 @@ def suite_conclusion_block(connection: sqlite3.Connection, runs: list[sqlite3.Ro
         "| Раунд | Критерий | Score | Почему такая оценка |",
         "|---:|---|---:|---|",
     ]
-    for index, run in enumerate(runs, start=1):
-        rationales = suite_rationales(connection, run["id"])
-        for code, name in SUITE_ROWS:
-            if code not in rationales:
-                continue
-            score, rationale = rationales[code]
-            lines.append(f"| {index} | {name} | {score:.1f}/10 | {rationale} |")
+    if not runs:
+        lines.append("| — | — | — | Данных по прогонам пока нет. |")
+        lines.append("")
+        return lines
+
+    run = runs[-1]
+    round_index = len(runs)
+    rationales = suite_rationales(connection, run["id"])
+    for code, name in SUITE_ROWS:
+        if code not in rationales:
+            continue
+        score, rationale = rationales[code]
+        lines.append(f"| {round_index} | {name} | {score:.1f}/10 | {rationale} |")
     lines.append("")
     return lines
 
@@ -296,14 +304,20 @@ def test_case_conclusion_block(connection: sqlite3.Connection, runs: list[sqlite
         "| Раунд | Критерий | Score | Почему такая оценка |",
         "|---:|---|---:|---|",
     ]
-    for index, run in enumerate(runs, start=1):
-        rationales = test_case_average_rationales(connection, run["id"])
-        for code, name in TEST_CASE_ROWS:
-            if code not in rationales:
-                continue
-            avg_score, count, min_score, max_score = rationales[code]
-            reason = test_case_reason(code, avg_score, count, min_score, max_score)
-            lines.append(f"| {index} | {name} | {avg_score:.1f}/10 | {reason} |")
+    if not runs:
+        lines.append("| — | — | — | Данных по прогонам пока нет. |")
+        lines.append("")
+        return lines
+
+    run = runs[-1]
+    round_index = len(runs)
+    rationales = test_case_average_rationales(connection, run["id"])
+    for code, name in TEST_CASE_ROWS:
+        if code not in rationales:
+            continue
+        avg_score, count, min_score, max_score = rationales[code]
+        reason = test_case_reason(code, avg_score, count, min_score, max_score)
+        lines.append(f"| {round_index} | {name} | {avg_score:.1f}/10 | {reason} |")
     lines.append("")
     return lines
 
