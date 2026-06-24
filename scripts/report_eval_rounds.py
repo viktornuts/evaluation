@@ -373,6 +373,43 @@ def benchmark_index_for_current(
     return max(previous_indexes, key=lambda index: benchmark_key(run_suite[index], run_tc[index]))
 
 
+def benchmark_block(
+    runs: list[sqlite3.Row],
+    run_suite: list[dict[str, str]],
+    run_tc: list[dict[str, str]],
+) -> list[str]:
+    lines = ["## TOP benchmark", ""]
+    if not runs:
+        return lines + ["Данных по прогонам пока нет.", ""]
+
+    current_run = runs[-1]["run_code"]
+    if len(runs) == 1:
+        return lines + [
+            f"Текущий раунд `{current_run}` является первым доступным прогоном. TOP benchmark пока не выбран.",
+            "",
+        ]
+
+    benchmark_index = benchmark_index_for_current(runs, run_suite, run_tc)
+    benchmark_run = runs[benchmark_index]["run_code"]
+    overall, cleanliness, trust = benchmark_key(run_suite[benchmark_index], run_tc[benchmark_index])
+    mode = "последовательное сравнение с предыдущим раундом" if len(runs) <= 2 else "автоматический TOP benchmark"
+    lines.extend(
+        [
+            f"Текущий раунд `{current_run}` сравнивается с `{benchmark_run}`.",
+            "",
+            "| Поле | Значение |",
+            "|---|---|",
+            f"| Режим сравнения | {mode} |",
+            f"| TOP benchmark | `{benchmark_run}` |",
+            f"| Основание выбора | `overall_completeness={overall:.1f}`, `suite_cleanliness={cleanliness:.1f}`, `no_hallucinations={trust:.1f}` |",
+            "",
+            "Начиная с третьего раунда benchmark выбирается среди всех предыдущих раундов: сначала по максимальному `overall_completeness`, затем по `suite_cleanliness`, затем по `no_hallucinations`.",
+            "",
+        ]
+    )
+    return lines
+
+
 def verdict_block(
     runs: list[sqlite3.Row],
     run_suite: list[dict[str, str]],
@@ -392,7 +429,7 @@ def verdict_block(
 
     benchmark_index = benchmark_index_for_current(runs, run_suite, run_tc)
     benchmark_run = runs[benchmark_index]["run_code"]
-    benchmark_label = "предыдущим раундом" if benchmark_index == len(runs) - 2 else "TOP benchmark"
+    benchmark_label = "предыдущим раундом" if len(runs) <= 2 else "TOP benchmark"
     suite_improved, suite_worsened, suite_unchanged = score_delta_summary(
         SUITE_ROWS,
         run_suite[benchmark_index],
@@ -506,6 +543,7 @@ def build_report(connection: sqlite3.Connection, up_to_run_code: str | None = No
         "",
     ]
     lines.extend(run_summary_table(connection, runs))
+    lines.extend(benchmark_block(runs, run_suite, run_tc))
     lines.extend(
         table_block(
             "1. Декомпозиция требований",

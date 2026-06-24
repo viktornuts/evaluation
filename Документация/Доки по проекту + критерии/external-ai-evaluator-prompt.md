@@ -197,6 +197,13 @@ python scripts/build_pdf_reports.py
 - что ухудшилось;
 - общий вывод, к чему привело изменение агента.
 
+В PDF/MD отчете обязательно добавь отдельный блок "TOP benchmark" до основных таблиц. Покажи:
+- текущий run_code;
+- benchmark run_code;
+- режим сравнения;
+- значения benchmark по overall_completeness, suite_cleanliness, no_hallucinations;
+- краткое правило выбора benchmark.
+
 Шаг 7. Формат ответа пользователю
 
 Ответь кратко:
