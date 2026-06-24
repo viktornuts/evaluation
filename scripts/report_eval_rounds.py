@@ -47,7 +47,7 @@ def natural_run_key(run: sqlite3.Row) -> tuple[int, str]:
     return (int(match.group(1)) if match else 9999, run["run_code"])
 
 
-def eval_runs(connection: sqlite3.Connection) -> list[sqlite3.Row]:
+def eval_runs(connection: sqlite3.Connection, up_to_run_code: str | None = None) -> list[sqlite3.Row]:
     rows = connection.execute(
         """
         SELECT *
@@ -57,7 +57,13 @@ def eval_runs(connection: sqlite3.Connection) -> list[sqlite3.Row]:
         """,
         (DATASET_ID,),
     ).fetchall()
-    return sorted(rows, key=natural_run_key)
+    sorted_rows = sorted(rows, key=natural_run_key)
+    if up_to_run_code is None:
+        return sorted_rows
+    for index, run in enumerate(sorted_rows):
+        if run["run_code"] == up_to_run_code:
+            return sorted_rows[: index + 1]
+    return sorted_rows
 
 
 def target_map(connection: sqlite3.Connection, table: str) -> dict[str, str]:
@@ -90,6 +96,29 @@ def suite_rationales(connection: sqlite3.Connection, eval_run_id: str) -> dict[s
         (eval_run_id,),
     ).fetchall()
     return {row["code"]: (row["score"], row["rationale"] or "") for row in rows}
+
+
+def test_case_average_rationales(connection: sqlite3.Connection, eval_run_id: str) -> dict[str, tuple[float, int, float, float]]:
+    rows = connection.execute(
+        """
+        SELECT c.code, AVG(a.score) AS avg_score, COUNT(*) AS count,
+               MIN(a.score) AS min_score, MAX(a.score) AS max_score
+        FROM test_case_quality_assessments a
+        JOIN test_case_quality_criteria c ON c.id = a.criterion_id
+        WHERE a.eval_run_id = ?
+        GROUP BY c.code
+        """,
+        (eval_run_id,),
+    ).fetchall()
+    return {
+        row["code"]: (
+            row["avg_score"],
+            row["count"],
+            row["min_score"],
+            row["max_score"],
+        )
+        for row in rows
+    }
 
 
 def test_case_average_scores(connection: sqlite3.Connection, eval_run_id: str) -> dict[str, str]:
@@ -165,6 +194,23 @@ def table_block(
     return lines
 
 
+def decomposition_conclusion_block(runs: list[sqlite3.Row]) -> list[str]:
+    lines = [
+        "### Вывод по блоку декомпозиции",
+        "",
+    ]
+    if not runs:
+        lines.append("Данных по прогонам пока нет.")
+    else:
+        lines.append(
+            "В текущих раундах на вход отчета передавались только сгенерированные тест-кейсы. "
+            "Результат декомпозиции требований от агента не импортировался, поэтому критерии "
+            "`decomposition_completeness`, `decomposition_boundaries` и `requirement_consolidation` пока не измерялись."
+        )
+    lines.append("")
+    return lines
+
+
 def run_summary_table(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -> list[str]:
     lines = [
         "## Параметры прогонов",
@@ -191,9 +237,9 @@ def run_summary_table(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -
     return lines
 
 
-def suite_rationale_block(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -> list[str]:
+def suite_conclusion_block(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -> list[str]:
     lines = [
-        "## Пояснения по оценкам набора",
+        "### Вывод по блоку набора ТК",
         "",
         "| Раунд | Критерий | Score | Почему такая оценка |",
         "|---:|---|---:|---|",
@@ -209,8 +255,61 @@ def suite_rationale_block(connection: sqlite3.Connection, runs: list[sqlite3.Row
     return lines
 
 
-def build_report(connection: sqlite3.Connection) -> str:
-    runs = eval_runs(connection)
+def test_case_reason(code: str, avg_score: float, count: int, min_score: float, max_score: float) -> str:
+    if code == "classification_correctness":
+        return (
+            f"Среднее по {count} ТК: типы в основном совпадают с названиями/метками; "
+            "снижение связано со спорными API/Kafka или E2E-классификациями."
+        )
+    if code == "template_required_attributes":
+        return (
+            f"Среднее по {count} ТК: структура есть, но часть экспортов не содержит прямых ссылок "
+            "на атомарные требования, поэтому оценка ниже целевых 100%."
+        )
+    if code == "conditions_quality":
+        return (
+            f"Среднее по {count} ТК: предусловия в основном есть, но постусловия часто отсутствуют "
+            "или не выделены отдельно."
+        )
+    if code == "step_atomicity":
+        return (
+            f"Среднее по {count} ТК: шаги в основном атомарны; отдельные снижения связаны со склейкой "
+            "нескольких действий или проверок в одном шаге."
+        )
+    if code == "expected_result_quality":
+        return (
+            f"Среднее по {count} ТК: ожидаемые результаты заполнены, но часть результатов объединяет "
+            "несколько проверок или требует уточнения."
+        )
+    if code == "no_hallucinations":
+        return (
+            f"Среднее по {count} ТК: диапазон оценок {min_score:.1f}-{max_score:.1f}; снижение связано "
+            "с неподтвержденными endpoint/status/role деталями и производными сценариями."
+        )
+    return f"Среднее по {count} ТК: {avg_score:.1f}/10."
+
+
+def test_case_conclusion_block(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -> list[str]:
+    lines = [
+        "### Вывод по блоку отдельных ТК",
+        "",
+        "| Раунд | Критерий | Score | Почему такая оценка |",
+        "|---:|---|---:|---|",
+    ]
+    for index, run in enumerate(runs, start=1):
+        rationales = test_case_average_rationales(connection, run["id"])
+        for code, name in TEST_CASE_ROWS:
+            if code not in rationales:
+                continue
+            avg_score, count, min_score, max_score = rationales[code]
+            reason = test_case_reason(code, avg_score, count, min_score, max_score)
+            lines.append(f"| {index} | {name} | {avg_score:.1f}/10 | {reason} |")
+    lines.append("")
+    return lines
+
+
+def build_report(connection: sqlite3.Connection, up_to_run_code: str | None = None) -> str:
+    runs = eval_runs(connection, up_to_run_code)
 
     decomp_targets = target_map(connection, "requirement_decomposition_quality_criteria")
     suite_targets = target_map(connection, "test_suite_quality_criteria")
@@ -236,6 +335,7 @@ def build_report(connection: sqlite3.Connection) -> str:
             run_decomp,
         )
     )
+    lines.extend(decomposition_conclusion_block(runs))
     lines.extend(
         table_block(
             "2. Набор ТК",
@@ -244,6 +344,7 @@ def build_report(connection: sqlite3.Connection) -> str:
             run_suite,
         )
     )
+    lines.extend(suite_conclusion_block(connection, runs))
     lines.extend(
         table_block(
             "3. Отдельные ТК",
@@ -252,7 +353,7 @@ def build_report(connection: sqlite3.Connection) -> str:
             run_tc,
         )
     )
-    lines.extend(suite_rationale_block(connection, runs))
+    lines.extend(test_case_conclusion_block(connection, runs))
     lines.extend(
         [
             "## Вердикт",
@@ -268,10 +369,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build an eval rounds report from SQLite.")
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--up-to-run-code")
     args = parser.parse_args()
 
     with connect(args.db) as connection:
-        report = build_report(connection)
+        report = build_report(connection, args.up_to_run_code)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(report, encoding="utf-8")
