@@ -355,6 +355,24 @@ def score_delta_summary(
     return improved, worsened, unchanged
 
 
+def benchmark_key(suite_scores_map: dict[str, str], tc_scores_map: dict[str, str]) -> tuple[float, float, float]:
+    overall = numeric_score(suite_scores_map.get("overall_completeness")) or -1.0
+    cleanliness = numeric_score(suite_scores_map.get("suite_cleanliness")) or -1.0
+    trust = numeric_score(tc_scores_map.get("no_hallucinations")) or -1.0
+    return overall, cleanliness, trust
+
+
+def benchmark_index_for_current(
+    runs: list[sqlite3.Row],
+    run_suite: list[dict[str, str]],
+    run_tc: list[dict[str, str]],
+) -> int:
+    if len(runs) <= 2:
+        return len(runs) - 2
+    previous_indexes = range(0, len(runs) - 1)
+    return max(previous_indexes, key=lambda index: benchmark_key(run_suite[index], run_tc[index]))
+
+
 def verdict_block(
     runs: list[sqlite3.Row],
     run_suite: list[dict[str, str]],
@@ -372,15 +390,17 @@ def verdict_block(
             "",
         ]
 
-    previous_run = runs[-2]["run_code"]
+    benchmark_index = benchmark_index_for_current(runs, run_suite, run_tc)
+    benchmark_run = runs[benchmark_index]["run_code"]
+    benchmark_label = "предыдущим раундом" if benchmark_index == len(runs) - 2 else "TOP benchmark"
     suite_improved, suite_worsened, suite_unchanged = score_delta_summary(
         SUITE_ROWS,
-        run_suite[-2],
+        run_suite[benchmark_index],
         run_suite[-1],
     )
     tc_improved, tc_worsened, tc_unchanged = score_delta_summary(
         TEST_CASE_ROWS,
-        run_tc[-2],
+        run_tc[benchmark_index],
         run_tc[-1],
     )
     improved = suite_improved + tc_improved
@@ -389,7 +409,7 @@ def verdict_block(
 
     lines.extend(
         [
-            f"Сравнение текущего раунда `{current_run}` с предыдущим `{previous_run}`.",
+            f"Сравнение текущего раунда `{current_run}` с {benchmark_label} `{benchmark_run}`.",
             "",
             "### Что улучшилось",
             "",
@@ -412,13 +432,13 @@ def verdict_block(
     else:
         lines.append("- Критериев без существенной динамики нет.")
 
-    overall_previous = numeric_score(run_suite[-2].get("overall_completeness"))
+    overall_previous = numeric_score(run_suite[benchmark_index].get("overall_completeness"))
     overall_current = numeric_score(run_suite[-1].get("overall_completeness"))
-    cleanliness_previous = numeric_score(run_suite[-2].get("suite_cleanliness"))
+    cleanliness_previous = numeric_score(run_suite[benchmark_index].get("suite_cleanliness"))
     cleanliness_current = numeric_score(run_suite[-1].get("suite_cleanliness"))
-    positive_previous = numeric_score(run_suite[-2].get("positive_coverage"))
+    positive_previous = numeric_score(run_suite[benchmark_index].get("positive_coverage"))
     positive_current = numeric_score(run_suite[-1].get("positive_coverage"))
-    required_previous = numeric_score(run_suite[-2].get("required_checks_coverage"))
+    required_previous = numeric_score(run_suite[benchmark_index].get("required_checks_coverage"))
     required_current = numeric_score(run_suite[-1].get("required_checks_coverage"))
 
     conclusion_parts: list[str] = []
@@ -452,16 +472,16 @@ def verdict_block(
     if overall_previous is not None and overall_current is not None:
         if overall_current > overall_previous:
             lines.append(
-                "В целом текущая версия выглядит лучше предыдущей: набор стал более пригодным для использования, "
+                f"В целом текущая версия выглядит лучше benchmark `{benchmark_run}`: набор стал более пригодным для использования, "
                 "несмотря на отдельные просадки по покрытию."
             )
         elif overall_current < overall_previous:
             lines.append(
-                "В целом текущая версия выглядит хуже предыдущей: снижение общей полноты требует анализа причин."
+                f"В целом текущая версия выглядит хуже benchmark `{benchmark_run}`: снижение общей полноты требует анализа причин."
             )
         else:
             lines.append(
-                "В целом текущая версия находится примерно на уровне предыдущей: значимого изменения общей полноты нет."
+                f"В целом текущая версия находится примерно на уровне benchmark `{benchmark_run}`: значимого изменения общей полноты нет."
             )
     lines.append("")
     return lines
