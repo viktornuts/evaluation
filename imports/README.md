@@ -1,6 +1,43 @@
-# Dataset Import Format
+# Imports
 
 This folder is for input files that should be imported into the local eval database.
+
+## Round Input Structure
+
+Every new eval round must get its own folder:
+
+```text
+imports/
+  rounds/
+    <run_code>/
+      source/
+      extracted/
+      notes.md
+```
+
+Current example:
+
+```text
+imports/rounds/v0/source/round_v1_generated_test_cases.txt
+imports/rounds/v1/source/round_v1_output.xlsx
+imports/rounds/v2/source/round_v2_output.xlsx
+```
+
+When the user sends "Новый раунд", place the original user-provided archive/files under:
+
+```text
+imports/rounds/<run_code>/source/
+```
+
+If files are extracted from an archive, keep the original archive in `source/` and put extracted files under:
+
+```text
+imports/rounds/<run_code>/extracted/
+```
+
+Do not mix files from different rounds in the root `imports/` folder.
+
+## Dataset Import Format
 
 The current MVP importer accepts one JSON file with this shape:
 

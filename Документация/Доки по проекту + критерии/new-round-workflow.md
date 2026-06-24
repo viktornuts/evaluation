@@ -34,6 +34,48 @@
 2. Файл или файлы декомпозиции требований.
 3. Файл или файлы сгенерированных тест-кейсов.
 
+## Структура imports/exports по раундам
+
+Каждый новый раунд должен иметь отдельные папки входа и выхода.
+
+Входные файлы пользователя:
+
+```text
+imports/rounds/<run_code>/source/
+```
+
+Если пользователь прислал архив, оригинальный архив сохраняется в `source/`.
+Распакованные файлы, если они нужны, складываются в:
+
+```text
+imports/rounds/<run_code>/extracted/
+```
+
+Выходные файлы по раунду:
+
+```text
+exports/rounds/<run_code>/
+```
+
+PDF-история по раунду:
+
+```text
+exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
+```
+
+Актуальный сводный PDF:
+
+```text
+exports/pdf/eval_rounds_report_latest.pdf
+```
+
+Правило:
+
+- новые файлы раунда не кладем напрямую в корень `imports/`;
+- новые файлы раунда не кладем напрямую в корень `exports/`;
+- корень `imports/` остается для общих примеров, справочных импортов и README;
+- корень `exports/` остается для кросс-раундовых артефактов.
+
 Рекомендуемые имена:
 
 ```text
@@ -268,6 +310,12 @@ exports/pdf/eval_rounds_report_latest.pdf
 exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 ```
 
+Markdown/служебные отчеты конкретного раунда:
+
+```text
+exports/rounds/<run_code>/
+```
+
 Методология:
 
 ```text
@@ -322,4 +370,3 @@ exports/pdf/methodology/scoring_methodology.pdf
 - выдавать отсутствующие параметры агента за реальные;
 - смешивать разные датасеты без `dataset_code` и `case_code`;
 - перетирать историю старых раундов без явной причины.
-

@@ -8,8 +8,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "cpt_eval.sqlite"
-SOURCE_PATH = ROOT / "imports" / "round_v1_generated_test_cases.txt"
-REPORT_PATH = ROOT / "exports" / "round_v0_assessment.md"
+SOURCE_PATH = ROOT / "imports" / "rounds" / "v0" / "source" / "round_v1_generated_test_cases.txt"
+REPORT_PATH = ROOT / "exports" / "rounds" / "v0" / "round_v0_assessment.md"
 
 DATASET_ID = "dataset_customer_gold_v1"
 DATASET_CASE_ID = "case_customer_gold_release_integration"

@@ -34,6 +34,14 @@ exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 Каноническая папка датасетов:
 datasets/
 
+Структура входов/выходов по раундам:
+imports/rounds/<run_code>/source/
+imports/rounds/<run_code>/extracted/
+exports/rounds/<run_code>/
+exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
+
+Не клади новые файлы конкретного раунда напрямую в корень imports/ или exports/.
+
 Если пользователь пишет "Новый раунд" и передает zip/rar/7z/набор файлов, сделай следующее.
 
 Шаг 1. Запусти новый раунд
@@ -42,6 +50,14 @@ datasets/
 "Запускаю раунд №<номер>"
 
 Номер раунда определи по таблице eval_runs и существующим run_code.
+
+Создай папки:
+- imports/rounds/<run_code>/source/
+- imports/rounds/<run_code>/extracted/ при необходимости;
+- exports/rounds/<run_code>/.
+
+Сохрани оригинальные пользовательские файлы в imports/rounds/<run_code>/source/.
+Если распаковываешь архив, результат распаковки положи в imports/rounds/<run_code>/extracted/.
 
 Шаг 2. Проверь комплект файлов
 
@@ -163,6 +179,7 @@ python scripts/build_pdf_reports.py
 - exports/pdf/eval_rounds_report_latest.pdf
 - exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 - exports/pdf/methodology/scoring_methodology.pdf
+- exports/rounds/<run_code>/ для служебных round-specific файлов
 
 В latest-отчете таблицы могут показывать накопительную динамику по всем раундам, но выводы под блоками должны объяснять только последний текущий раунд.
 Исторический PDF по конкретному run_code должен объяснять только этот run_code.
@@ -239,4 +256,3 @@ JOIN test_cases tc ON tc.id = l.test_case_id
 JOIN requirements r ON r.id = l.requirement_id
 ORDER BY tc.test_case_code, r.requirement_code;
 ```
-

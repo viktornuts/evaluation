@@ -12,6 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "cpt_eval.sqlite"
 IMPORTS = ROOT / "imports"
 EXPORTS = ROOT / "exports"
+IMPORT_ROUNDS = IMPORTS / "rounds"
+EXPORT_ROUNDS = EXPORTS / "rounds"
 
 DATASET_ID = "dataset_customer_gold_v1"
 DATASET_CASE_ID = "case_customer_gold_release_integration"
@@ -20,14 +22,14 @@ ROUND_FILES = [
     {
         "run_code": "v1",
         "eval_run_id": "eval_run_v1_xlsx",
-        "source": IMPORTS / "round_v1_output.xlsx",
+        "source": IMPORT_ROUNDS / "v1" / "source" / "round_v1_output.xlsx",
         "agent": "prompts_v1",
         "change_summary": "Раунд v1: импорт из output_v1.xlsx, 51 сгенерированный ТК из папки prompts_v1.",
     },
     {
         "run_code": "v2",
         "eval_run_id": "eval_run_v2_xlsx",
-        "source": IMPORTS / "round_v2_output.xlsx",
+        "source": IMPORT_ROUNDS / "v2" / "source" / "round_v2_output.xlsx",
         "agent": "prompts_v2",
         "change_summary": "Раунд v2: импорт из output_v2.xlsx, набор сокращен и структурирован относительно v1.",
     },
@@ -629,7 +631,7 @@ def insert_suite_assessments(connection: sqlite3.Connection, config: dict[str, o
 
 
 def write_round_report(config: dict[str, object], cases: list[GeneratedCase]) -> None:
-    path = EXPORTS / f"round_{config['run_code']}_assessment.md"
+    path = EXPORT_ROUNDS / str(config["run_code"]) / f"round_{config['run_code']}_assessment.md"
     suite = suite_assessments(cases)
     lines = [
         f"# Демо-оценка прогона {config['run_code']}",
