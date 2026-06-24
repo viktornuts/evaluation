@@ -344,7 +344,7 @@ def score_delta_summary(
         curr_score = numeric_score(current.get(code))
         if prev_score is None or curr_score is None:
             continue
-        delta = curr_score - prev_score
+        delta = round(curr_score - prev_score, 1)
         line = f"{name}: {prev_score:.1f} -> {curr_score:.1f} ({delta:+.1f})"
         if delta >= 0.2:
             improved.append(line)
@@ -512,9 +512,14 @@ def verdict_block(
 
     if overall_previous is not None and overall_current is not None:
         if overall_current > overall_previous:
+            if worsened:
+                worsened_names = ", ".join(item.split(":", 1)[0].lower() for item in worsened)
+                caveat = f"при отдельных просадках по критериям: {worsened_names}."
+            else:
+                caveat = "без заметных просадок по измеряемым критериям."
             lines.append(
                 f"В целом текущая версия выглядит лучше benchmark `{benchmark_run}`: набор стал более пригодным для использования, "
-                "несмотря на отдельные просадки по покрытию."
+                f"{caveat}"
             )
         elif overall_current < overall_previous:
             lines.append(
