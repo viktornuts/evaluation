@@ -322,6 +322,151 @@ def test_case_conclusion_block(connection: sqlite3.Connection, runs: list[sqlite
     return lines
 
 
+def numeric_score(value: str | None) -> float | None:
+    if not value or value == "—":
+        return None
+    try:
+        return float(value.split("/", 1)[0])
+    except (TypeError, ValueError):
+        return None
+
+
+def score_delta_summary(
+    rows: list[tuple[str, str]],
+    previous: dict[str, str],
+    current: dict[str, str],
+) -> tuple[list[str], list[str], list[str]]:
+    improved: list[str] = []
+    worsened: list[str] = []
+    unchanged: list[str] = []
+    for code, name in rows:
+        prev_score = numeric_score(previous.get(code))
+        curr_score = numeric_score(current.get(code))
+        if prev_score is None or curr_score is None:
+            continue
+        delta = curr_score - prev_score
+        line = f"{name}: {prev_score:.1f} -> {curr_score:.1f} ({delta:+.1f})"
+        if delta >= 0.2:
+            improved.append(line)
+        elif delta <= -0.2:
+            worsened.append(line)
+        else:
+            unchanged.append(line)
+    return improved, worsened, unchanged
+
+
+def verdict_block(
+    runs: list[sqlite3.Row],
+    run_suite: list[dict[str, str]],
+    run_tc: list[dict[str, str]],
+) -> list[str]:
+    lines = ["## Вердикт", ""]
+    if not runs:
+        return lines + ["Нет данных по прогонам.", ""]
+
+    current_run = runs[-1]["run_code"]
+    if len(runs) == 1:
+        return lines + [
+            f"Раунд `{current_run}` является первым доступным прогоном, поэтому сравнение с предыдущей версией агента пока невозможно.",
+            "Отчет фиксирует базовое состояние качества и будет использоваться как точка сравнения для следующих раундов.",
+            "",
+        ]
+
+    previous_run = runs[-2]["run_code"]
+    suite_improved, suite_worsened, suite_unchanged = score_delta_summary(
+        SUITE_ROWS,
+        run_suite[-2],
+        run_suite[-1],
+    )
+    tc_improved, tc_worsened, tc_unchanged = score_delta_summary(
+        TEST_CASE_ROWS,
+        run_tc[-2],
+        run_tc[-1],
+    )
+    improved = suite_improved + tc_improved
+    worsened = suite_worsened + tc_worsened
+    unchanged = suite_unchanged + tc_unchanged
+
+    lines.extend(
+        [
+            f"Сравнение текущего раунда `{current_run}` с предыдущим `{previous_run}`.",
+            "",
+            "### Что улучшилось",
+            "",
+        ]
+    )
+    if improved:
+        lines.extend(f"- {item}" for item in improved)
+    else:
+        lines.append("- Значимых улучшений по измеряемым критериям не найдено.")
+
+    lines.extend(["", "### Что ухудшилось", ""])
+    if worsened:
+        lines.extend(f"- {item}" for item in worsened)
+    else:
+        lines.append("- Значимых ухудшений по измеряемым критериям не найдено.")
+
+    lines.extend(["", "### Без существенных изменений", ""])
+    if unchanged:
+        lines.extend(f"- {item}" for item in unchanged)
+    else:
+        lines.append("- Критериев без существенной динамики нет.")
+
+    overall_previous = numeric_score(run_suite[-2].get("overall_completeness"))
+    overall_current = numeric_score(run_suite[-1].get("overall_completeness"))
+    cleanliness_previous = numeric_score(run_suite[-2].get("suite_cleanliness"))
+    cleanliness_current = numeric_score(run_suite[-1].get("suite_cleanliness"))
+    positive_previous = numeric_score(run_suite[-2].get("positive_coverage"))
+    positive_current = numeric_score(run_suite[-1].get("positive_coverage"))
+    required_previous = numeric_score(run_suite[-2].get("required_checks_coverage"))
+    required_current = numeric_score(run_suite[-1].get("required_checks_coverage"))
+
+    conclusion_parts: list[str] = []
+    if overall_previous is not None and overall_current is not None:
+        conclusion_parts.append(
+            f"общая полнота набора изменилась с {overall_previous:.1f} до {overall_current:.1f}"
+        )
+    if cleanliness_previous is not None and cleanliness_current is not None:
+        conclusion_parts.append(
+            f"чистота набора изменилась с {cleanliness_previous:.1f} до {cleanliness_current:.1f}"
+        )
+    if positive_previous is not None and positive_current is not None:
+        conclusion_parts.append(
+            f"позитивное покрытие изменилось с {positive_previous:.1f} до {positive_current:.1f}"
+        )
+    if required_previous is not None and required_current is not None:
+        conclusion_parts.append(
+            f"покрытие обязательных проверок изменилось с {required_previous:.1f} до {required_current:.1f}"
+        )
+
+    lines.extend(["", "### Общий вывод", ""])
+    if conclusion_parts:
+        lines.append(
+            "Изменение агента в текущем раунде привело к следующему результату: "
+            + "; ".join(conclusion_parts)
+            + "."
+        )
+    else:
+        lines.append("Данных недостаточно, чтобы сформировать численный вывод по изменению агента.")
+
+    if overall_previous is not None and overall_current is not None:
+        if overall_current > overall_previous:
+            lines.append(
+                "В целом текущая версия выглядит лучше предыдущей: набор стал более пригодным для использования, "
+                "несмотря на отдельные просадки по покрытию."
+            )
+        elif overall_current < overall_previous:
+            lines.append(
+                "В целом текущая версия выглядит хуже предыдущей: снижение общей полноты требует анализа причин."
+            )
+        else:
+            lines.append(
+                "В целом текущая версия находится примерно на уровне предыдущей: значимого изменения общей полноты нет."
+            )
+    lines.append("")
+    return lines
+
+
 def build_report(connection: sqlite3.Connection, up_to_run_code: str | None = None) -> str:
     runs = eval_runs(connection, up_to_run_code)
 
@@ -368,14 +513,7 @@ def build_report(connection: sqlite3.Connection, up_to_run_code: str | None = No
         )
     )
     lines.extend(test_case_conclusion_block(connection, runs))
-    lines.extend(
-        [
-            "## Вердикт",
-            "",
-            "Механизм оценки работает на нескольких раундах: каждый прогон хранится отдельно, сгенерированные ТК связаны с требованиями, оценки сохранены по критериям и собираются в нарастающий отчет. Оценки являются демо-разметкой Codex и требуют ручного ревью перед управленческим решением.",
-            "",
-        ]
-    )
+    lines.extend(verdict_block(runs, run_suite, run_tc))
     return "\n".join(lines)
 
 
