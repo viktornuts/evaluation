@@ -10,6 +10,29 @@ CREATE TABLE IF NOT EXISTS datasets (
     UNIQUE (name, version)
 );
 
+CREATE TABLE IF NOT EXISTS dataset_input_profiles (
+    code TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    expected_behavior TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS dataset_profile_criterion_targets (
+    id TEXT PRIMARY KEY,
+    input_profile_code TEXT NOT NULL,
+    criterion_group TEXT NOT NULL
+        CHECK (criterion_group IN ('requirement', 'requirement_decomposition', 'test_suite', 'test_case')),
+    criterion_code TEXT NOT NULL,
+    target_score REAL CHECK (target_score IS NULL OR (target_score BETWEEN 0 AND 10)),
+    target_display TEXT,
+    target_description TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (input_profile_code) REFERENCES dataset_input_profiles(code) ON DELETE CASCADE,
+    UNIQUE (input_profile_code, criterion_group, criterion_code)
+);
+
 CREATE TABLE IF NOT EXISTS eval_runs (
     id TEXT PRIMARY KEY,
     dataset_id TEXT NOT NULL,
@@ -49,7 +72,23 @@ CREATE TABLE IF NOT EXISTS dataset_cases (
     input_profile_name TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (dataset_id) REFERENCES datasets(id) ON DELETE CASCADE,
+    FOREIGN KEY (input_profile_code) REFERENCES dataset_input_profiles(code) ON DELETE SET NULL,
     UNIQUE (dataset_id, case_code)
+);
+
+CREATE TABLE IF NOT EXISTS dataset_case_criterion_targets (
+    id TEXT PRIMARY KEY,
+    dataset_case_id TEXT NOT NULL,
+    criterion_group TEXT NOT NULL
+        CHECK (criterion_group IN ('requirement', 'requirement_decomposition', 'test_suite', 'test_case')),
+    criterion_code TEXT NOT NULL,
+    target_score REAL CHECK (target_score IS NULL OR (target_score BETWEEN 0 AND 10)),
+    target_display TEXT,
+    target_description TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
+    UNIQUE (dataset_case_id, criterion_group, criterion_code)
 );
 
 CREATE TABLE IF NOT EXISTS source_materials (
@@ -468,6 +507,11 @@ CREATE TABLE IF NOT EXISTS external_test_case_reviews (
 );
 
 CREATE INDEX IF NOT EXISTS idx_dataset_cases_dataset_id ON dataset_cases(dataset_id);
+CREATE INDEX IF NOT EXISTS idx_dataset_cases_input_profile ON dataset_cases(input_profile_code);
+CREATE INDEX IF NOT EXISTS idx_dataset_profile_targets_profile
+    ON dataset_profile_criterion_targets(input_profile_code, criterion_group, criterion_code);
+CREATE INDEX IF NOT EXISTS idx_dataset_case_targets_case
+    ON dataset_case_criterion_targets(dataset_case_id, criterion_group, criterion_code);
 CREATE INDEX IF NOT EXISTS idx_sources_case_id ON source_materials(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_fragments_source_id ON source_fragments(source_material_id);
 CREATE INDEX IF NOT EXISTS idx_input_requirements_case_id ON input_requirements(dataset_case_id);

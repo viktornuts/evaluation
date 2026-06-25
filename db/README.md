@@ -6,6 +6,7 @@ This folder contains the local database schema for the CPT eval dataset store.
 
 - `schema.sql` - SQLite schema for datasets, source fragments, requirements, requirement quality assessments, test cases, traceability links, unsupported details, and future eval runs.
 - `seed.sql` - initial quality criteria and scoring rubrics used to assess input requirements.
+- `profile_targets.sql` - input profiles and profile-specific target values for criteria.
 
 ## Quality Score Scale
 
@@ -43,10 +44,13 @@ The MVP seeds ten requirement criteria:
 ```text
 requirement_quality_criteria
   -> requirement_quality_criterion_score_levels
+dataset_input_profiles
+  -> dataset_profile_criterion_targets
 datasets
   -> eval_runs
   -> dataset_cases
     -> input_profile_code / input_profile_name
+    -> dataset_case_criterion_targets
     -> source_materials
       -> source_fragments
     -> input_requirements
@@ -81,7 +85,17 @@ Required run fields are `agent_name`, `agent_version`, `prompt_snapshot`, `model
 
 `test_cases` stores the test case artifact itself. `test_case_evaluation_results` stores the result of checking a generated test case against the expected dataset, including match, structure, classification, hallucination, unsupported detail count, score, and rationale.
 
-`dataset_cases.input_profile_code` and `dataset_cases.input_profile_name` store the input-set profile from the criteria documents, for example full technical documentation, incomplete documentation, business-oriented documentation, noisy/conflicting documentation, or abstract documentation. This is intentionally a simple column, not a separate criteria table.
+`dataset_cases.input_profile_code` and `dataset_cases.input_profile_name` store the input-set profile from the criteria documents, for example full technical documentation, incomplete documentation, business-oriented documentation, noisy/conflicting documentation, or abstract documentation.
+
+`dataset_input_profiles` stores the allowed profile catalog. `dataset_profile_criterion_targets` stores default target values for each profile and criterion. This lets the same criterion mean different expected behavior for different inputs. For example, for `customer_gold_requirements` the target is full gold coverage, while for `incomplete_fragmented_docs` the target is safe partial coverage without hallucinations.
+
+`dataset_case_criterion_targets` stores overrides for one concrete dataset case. Target lookup order is:
+
+1. `dataset_case_criterion_targets` for the exact `dataset_case_id`;
+2. `dataset_profile_criterion_targets` for `dataset_cases.input_profile_code`;
+3. global `target_score` / `target_display` / `target_description` in the criterion table.
+
+This means a poor-requirements dataset can still receive `10/10` when the agent behaves correctly for that profile: covers the derivable part, marks gaps, and does not invent missing details.
 
 `requirement_source_summary` is a view that shows how many source fragments and source materials are linked to each requirement.
 

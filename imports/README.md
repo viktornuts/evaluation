@@ -117,11 +117,23 @@ Decimal scores are allowed for more precise percentages, for example `6.7 = 67%`
 
 `input_profile_code` / `input_profile_name` describe the source-input profile for the case. Use these for the five input-set types from the criteria documents, for example:
 
+- `customer_gold_requirements`
 - `complete_technical_docs`
 - `incomplete_fragmented_docs`
 - `business_user_story_docs`
 - `conflicting_noisy_docs`
 - `abstract_high_level_docs`
+
+The profile is not just a label. It determines target values through:
+
+```text
+dataset_input_profiles
+dataset_profile_criterion_targets
+dataset_case_criterion_targets
+```
+
+For a gold dataset, `10/10` means close match to the gold requirements and gold test cases.
+For incomplete, noisy, or abstract datasets, `10/10` means correct behavior for that input profile: safe coverage of the derivable part, explicit handling of gaps/conflicts, and no hallucinations.
 
 Each expected test case should be linked to requirements through `requirement_test_case_links`.
 For better traceability, each step should also either link to requirements or be marked through `unsupported_details`.

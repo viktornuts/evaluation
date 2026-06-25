@@ -21,6 +21,7 @@ data/cpt_eval.sqlite
 Документация/Доки по проекту + критерии/scoring-methodology.md
 Документация/Доки по проекту + критерии/reporting-rules.md
 Документация/Доки по проекту + критерии/new-round-workflow.md
+Документация/Доки по проекту + критерии/criterion-targets.md
 
 PDF-методология:
 exports/pdf/methodology/scoring_methodology.pdf
@@ -67,6 +68,28 @@ exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 1. Файл "Версия агента".
 2. Файл/файлы "Декомпозиция_<dataset_code>".
 3. Файл/файлы "ТК_<dataset_code>".
+
+Если раунд содержит несколько датасетов или кейсов, файлы должны содержать `dataset_code` и `case_code`:
+- `Декомпозиция_<dataset_code>__<case_code>.*`
+- `ТК_<dataset_code>__<case_code>.*`
+
+Предпочтительная структура:
+
+imports/rounds/<run_code>/source/
+  Версия агента.*
+  <dataset_code>__<case_code>/
+    Декомпозиция_<dataset_code>__<case_code>.*
+    ТК_<dataset_code>__<case_code>.*
+
+Для каждого dataset case проверь `dataset_cases.input_profile_code`. Если профиль не задан, спроси пользователя, какой профиль использовать, до выставления оценок.
+
+Стартовые профили:
+- `customer_gold_requirements`;
+- `complete_technical_docs`;
+- `incomplete_fragmented_docs`;
+- `business_user_story_docs`;
+- `conflicting_noisy_docs`;
+- `abstract_high_level_docs`.
 
 Если нет файла версии агента, спроси пользователя:
 "Не вижу файл с версией агента. Идем дальше без него? Если да, зафиксирую условные значения и отмечу это в отчете."
@@ -115,6 +138,13 @@ exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 
 Сравни результат агента с эталонными requirements.
 
+Перед оценкой определи целевые значения критериев:
+1. `dataset_case_criterion_targets` для конкретного dataset_case_id;
+2. `dataset_profile_criterion_targets` по input_profile_code;
+3. базовая цель из таблицы критерия.
+
+Не оценивай неполный, шумный или абстрактный датасет как `customer_gold_requirements`, если для него задан другой профиль.
+
 Используй таблицы:
 - requirement_decomposition_evaluation_results;
 - requirement_decomposition_quality_assessments;
@@ -142,6 +172,9 @@ exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 Шаг 5. Разбери тест-кейсы
 
 Файлы ТК сопоставляй с dataset_code и case_code.
+
+Перед оценкой набора и отдельных ТК учитывай `input_profile_code`.
+Для плохих/неполных требований высокий балл означает не "полный gold-набор", а корректное поведение для профиля: покрыты выводимые сценарии, пробелы/конфликты отмечены, неподтвержденные детали не добавлены.
 
 Используй таблицы:
 - test_cases;
@@ -248,6 +281,8 @@ python scripts/build_pdf_reports.py
 2. результат по каждому dataset_code;
 3. результат по input_profile_code;
 4. частные провалы по требованиям/ТК.
+
+Для каждого разреза явно показывай, какой профиль и какие цели использовались. Если у dataset case есть частные цели из `dataset_case_criterion_targets`, укажи это в отчете.
 ```
 
 ## SQL-подсказки
