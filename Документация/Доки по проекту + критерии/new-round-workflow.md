@@ -271,7 +271,7 @@ test_case_quality_criteria
 
 Критерии отдельных ТК:
 
-- `classification_correctness`;
+- `classification_correctness` - корректность вида ТК: UI, API, интеграционный или E2E;
 - `template_required_attributes`;
 - `conditions_quality`;
 - `step_atomicity`;

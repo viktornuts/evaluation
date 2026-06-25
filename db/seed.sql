@@ -114,7 +114,7 @@ VALUES
 
 INSERT OR IGNORE INTO test_case_quality_criteria (id, code, name, description, scale_min, scale_max)
 VALUES
-    ('tc_crit_classification_correctness', 'classification_correctness', 'Корректность вида ТК', 'Проверяет, что вид тест-кейса корректно определен как UI, API или интеграционный и соответствует содержанию сценария.', 0, 10),
+    ('tc_crit_classification_correctness', 'classification_correctness', 'Корректность вида ТК', 'Проверяет, что вид тест-кейса корректно определен как UI, API, интеграционный или E2E и соответствует содержанию сценария.', 0, 10),
     ('tc_crit_template_required_attributes', 'template_required_attributes', 'Шаблон и обязательные атрибуты', 'Проверяет, что ТК соответствует шаблону и содержит обязательные атрибуты, включая ссылку на задачу и ссылку на требования.', 0, 10),
     ('tc_crit_conditions_quality', 'conditions_quality', 'Предусловия и постусловия', 'Проверяет, что у ТК корректно описаны предусловия и постусловия, а постусловия не содержат шаги сценария.', 0, 10),
     ('tc_crit_step_atomicity', 'step_atomicity', 'Атомарность шагов', 'Проверяет, что каждый шаг содержит одно действие и не смешивает несколько проверок.', 0, 10),
@@ -123,7 +123,7 @@ VALUES
 
 INSERT OR IGNORE INTO test_case_quality_criterion_score_levels (id, criterion_id, score_min, score_max, label, description)
 VALUES
-    ('tc_qsl_classification_10', 'tc_crit_classification_correctness', 10, 10, 'correct_type', 'Вид ТК полностью соответствует сценарию: UI, API или интеграционный определен корректно.'),
+    ('tc_qsl_classification_10', 'tc_crit_classification_correctness', 10, 10, 'correct_type', 'Вид ТК полностью соответствует сценарию: UI, API, интеграционный или E2E определен корректно.'),
     ('tc_qsl_classification_8_9', 'tc_crit_classification_correctness', 8, 9, 'mostly_correct_type', 'Вид ТК в целом корректен, есть minor-спорность.'),
     ('tc_qsl_classification_6_7', 'tc_crit_classification_correctness', 6, 7, 'partly_correct_type', 'Вид ТК вероятно корректен, но требует проверки.'),
     ('tc_qsl_classification_4_5', 'tc_crit_classification_correctness', 4, 5, 'weak_type', 'Вид ТК слабо соответствует сценарию.'),

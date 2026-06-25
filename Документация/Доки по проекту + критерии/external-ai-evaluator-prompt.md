@@ -161,7 +161,7 @@ exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 - overall_completeness.
 
 Оцени каждый отдельный ТК по критериям:
-- classification_correctness;
+- classification_correctness - корректность вида ТК: UI, API, интеграционный или E2E;
 - template_required_attributes;
 - conditions_quality;
 - step_atomicity;
