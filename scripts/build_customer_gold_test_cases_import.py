@@ -9,8 +9,9 @@ from openpyxl import load_workbook
 
 
 ROOT = Path(__file__).resolve().parents[1]
-XLSX_IMPORT_PATH = ROOT / "imports" / "customer_gold_v1_test_cases.xlsx"
-IMPORT_PATH = ROOT / "imports" / "customer_gold_v1_test_cases.json"
+IMPORT_DATASET_DIR = ROOT / "imports" / "datasets" / "customer_gold_v1"
+XLSX_IMPORT_PATH = IMPORT_DATASET_DIR / "customer_gold_v1_test_cases.xlsx"
+IMPORT_PATH = IMPORT_DATASET_DIR / "customer_gold_v1_test_cases.json"
 DATASET_DIR = ROOT / "Документация" / "Датасеты" / "customer_gold_v1"
 SOURCE_XLSX_PATH = DATASET_DIR / "test-cases" / "source" / "gold_test_cases.xlsx"
 TEST_CASES_MD_PATH = DATASET_DIR / "test-cases" / "test-cases.md"

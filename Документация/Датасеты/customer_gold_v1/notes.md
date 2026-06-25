@@ -6,7 +6,7 @@
 
 Источник требований: `source/source_requirements.pdf`.
 
-Импортный файл: `imports/customer_gold_v1_requirements.json`.
+Импортный файл: `imports/datasets/customer_gold_v1/customer_gold_v1_requirements.json`.
 
 На текущем этапе 30 требований заведены как `expected`-требования золотого датасета. По договоренности для этого эталона всем требованиям выставлен score `10.0` по всем 10 критериям качества требований:
 
@@ -23,7 +23,7 @@
 
 Эталонные тест-кейсы импортированы из `test-cases/source/gold_test_cases.xlsx`.
 
-Импортный файл ТК: `imports/customer_gold_v1_test_cases.json`.
+Импортный файл ТК: `imports/datasets/customer_gold_v1/customer_gold_v1_test_cases.json`.
 
 Заведено:
 

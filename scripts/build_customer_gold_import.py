@@ -8,8 +8,9 @@ from pypdf import PdfReader
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ROWS_PATH = ROOT / "imports" / "customer_gold_v1_requirement_rows.json"
-IMPORT_PATH = ROOT / "imports" / "customer_gold_v1_requirements.json"
+IMPORT_DATASET_DIR = ROOT / "imports" / "datasets" / "customer_gold_v1"
+ROWS_PATH = IMPORT_DATASET_DIR / "customer_gold_v1_requirement_rows.json"
+IMPORT_PATH = IMPORT_DATASET_DIR / "customer_gold_v1_requirements.json"
 PDF_TMP_PATH = ROOT / "tmp" / "pdfs" / "source_requirements.pdf"
 DATASET_DIR = ROOT / "Документация" / "Датасеты" / "customer_gold_v1"
 SOURCE_PDF_PATH = DATASET_DIR / "source" / "source_requirements.pdf"

@@ -35,11 +35,13 @@ exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 datasets/
 
 Структура входов/выходов по раундам:
+imports/datasets/<dataset_code>_<version>/
 imports/rounds/<run_code>/source/
 imports/rounds/<run_code>/extracted/
 exports/rounds/<run_code>/
 exports/pdf/history/<run_code>/eval_rounds_report_<run_code>.pdf
 
+Файлы датасетов клади в `imports/datasets/<dataset_code>_<version>/`.
 Не клади новые файлы конкретного раунда напрямую в корень imports/ или exports/.
 
 Если пользователь пишет "Новый раунд" и передает zip/rar/7z/набор файлов, сделай следующее.

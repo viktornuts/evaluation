@@ -8,6 +8,8 @@ Every new eval round must get its own folder:
 
 ```text
 imports/
+  datasets/
+    <dataset_code>_<version>/
   rounds/
     <run_code>/
       source/
@@ -18,9 +20,23 @@ imports/
 Current example:
 
 ```text
+imports/datasets/customer_gold_v1/customer_gold_v1_requirements.json
+imports/datasets/customer_gold_v1/customer_gold_v1_test_cases.json
 imports/rounds/v0/source/round_v1_generated_test_cases.txt
 imports/rounds/v1/source/round_v1_output.xlsx
 imports/rounds/v2/source/round_v2_output.xlsx
+```
+
+Dataset-level imports must go under:
+
+```text
+imports/datasets/<dataset_code>_<version>/
+```
+
+Do not place dataset imports directly in the root `imports/` folder. See:
+
+```text
+imports/datasets/README.md
 ```
 
 When the user sends "Новый раунд", place the original user-provided archive/files under:
