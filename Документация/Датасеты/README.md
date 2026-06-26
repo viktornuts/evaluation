@@ -8,3 +8,7 @@
 
 - `customer_gold_v1/` - высокоприоритетный эталонный датасет от заказчика: требования и эталонные ТК.
 - `cpt_smoke_v1/` - первый пример MVP, соответствует `CASE-001` из `imports/example_dataset_case.json`.
+
+## План сбора corner-case датасетов
+
+- `corner-case-datasets-tracker.md` - таблица из 19 датасетов: эталон + 17 corner cases + E2E, с чекбоксами готовности.
