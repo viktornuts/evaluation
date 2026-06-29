@@ -83,6 +83,16 @@ imports/rounds/<run_code>/source/
 
 Для каждого dataset case проверь `dataset_cases.input_profile_code`. Если профиль не задан, спроси пользователя, какой профиль использовать, до выставления оценок.
 
+Если это corner-case датасет, проверь разметку `CC-xx`.
+Используй таблицы:
+- `corner_cases`;
+- `dataset_case_corner_case_links`;
+- `input_requirement_corner_case_links`.
+
+Если пользователь указал `CC-xx`, подтверди, что входные требования действительно проверяют этот corner case.
+Если один пример покрывает несколько corner cases, запиши основной как `primary`, дополнительные как `secondary`.
+Сверь `example_count` с `corner_cases.min_examples`.
+
 Стартовые профили:
 - `customer_gold_requirements`;
 - `complete_technical_docs`;

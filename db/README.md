@@ -7,6 +7,7 @@ This folder contains the local database schema for the CPT eval dataset store.
 - `schema.sql` - SQLite schema for datasets, source fragments, requirements, requirement quality assessments, test cases, traceability links, unsupported details, and future eval runs.
 - `seed.sql` - initial quality criteria and scoring rubrics used to assess input requirements.
 - `profile_targets.sql` - input profiles and profile-specific target values for criteria.
+- `corner_cases.sql` - corner-case catalog `CC-01`..`CC-18`.
 
 ## Quality Score Scale
 
@@ -46,14 +47,17 @@ requirement_quality_criteria
   -> requirement_quality_criterion_score_levels
 dataset_input_profiles
   -> dataset_profile_criterion_targets
+corner_cases
 datasets
   -> eval_runs
   -> dataset_cases
     -> input_profile_code / input_profile_name
     -> dataset_case_criterion_targets
+    -> dataset_case_corner_case_links
     -> source_materials
       -> source_fragments
     -> input_requirements
+      -> input_requirement_corner_case_links
       -> input_requirement_decomposition_links
     -> requirements
       -> requirement_source_links
@@ -96,6 +100,22 @@ Required run fields are `agent_name`, `agent_version`, `prompt_snapshot`, `model
 3. global `target_score` / `target_display` / `target_description` in the criterion table.
 
 This means a poor-requirements dataset can still receive `10/10` when the agent behaves correctly for that profile: covers the derivable part, marks gaps, and does not invent missing details.
+
+`corner_cases` stores the catalog of corner cases from the dataset collection plan, for example `CC-05` for contradictory requirements or `CC-18` for E2E classification.
+
+`dataset_case_corner_case_links` connects a dataset case to one or more corner cases. A link has:
+
+- `link_role` - `primary` or `secondary`;
+- `example_count` - how many input examples in this dataset case cover the corner case;
+- `coverage_status` - `planned`, `collected`, `imported`, `reference_ready`, or `ready_for_run`;
+- `rationale`.
+
+`input_requirement_corner_case_links` connects a concrete input requirement to one or more corner cases. Use it when one requirement/example covers several `CC-xx` values.
+
+Useful views:
+
+- `corner_case_dataset_coverage` - shows which dataset cases cover each corner case;
+- `corner_case_coverage_summary` - summarizes linked example counts and whether `min_examples` is reached.
 
 `requirement_source_summary` is a view that shows how many source fragments and source materials are linked to each requirement.
 

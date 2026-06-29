@@ -57,6 +57,39 @@ def report(db_path: Path) -> None:
         ).fetchall()
         print_rows("Dataset case input profiles", input_profiles)
 
+        corner_case_summary = connection.execute(
+            """
+            SELECT
+                corner_case_code,
+                class_name,
+                min_examples,
+                linked_example_count,
+                linked_dataset_case_count,
+                primary_link_count,
+                secondary_link_count,
+                min_examples_status
+            FROM corner_case_coverage_summary
+            ORDER BY corner_case_code
+            """
+        ).fetchall()
+        print_rows("Corner case coverage summary", corner_case_summary)
+
+        corner_case_links = connection.execute(
+            """
+            SELECT
+                corner_case_code,
+                dataset_name,
+                dataset_version,
+                case_code,
+                link_role,
+                example_count,
+                coverage_status
+            FROM corner_case_dataset_coverage
+            ORDER BY corner_case_code, dataset_name, dataset_version, case_code, link_role
+            """
+        ).fetchall()
+        print_rows("Corner case links by dataset case", corner_case_links)
+
         decomposition_profile = connection.execute(
             """
             SELECT

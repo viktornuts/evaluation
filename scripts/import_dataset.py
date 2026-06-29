@@ -25,6 +25,13 @@ def criterion_id(connection: sqlite3.Connection, code: str) -> str:
     return str(row["id"])
 
 
+def corner_case_id(connection: sqlite3.Connection, code: str) -> str:
+    row = connection.execute("SELECT id FROM corner_cases WHERE code = ?", (code,)).fetchone()
+    if row is None:
+        raise ValueError(f"Unknown corner case: {code}")
+    return str(row["id"])
+
+
 def upsert_dataset(connection: sqlite3.Connection, dataset: dict[str, Any]) -> None:
     connection.execute(
         """
@@ -154,6 +161,73 @@ def upsert_input_requirements(
                 "requirement_text": requirement["requirement_text"],
                 "source_fragment_id": requirement.get("source_fragment_id"),
                 "requirement_order": requirement.get("requirement_order"),
+            },
+        )
+        upsert_input_requirement_corner_case_links(
+            connection,
+            requirement["id"],
+            requirement.get("corner_case_links", []),
+        )
+
+
+def upsert_dataset_case_corner_case_links(
+    connection: sqlite3.Connection, case_id: str, links: list[dict[str, Any]]
+) -> None:
+    for link in links:
+        code = link["corner_case_code"]
+        connection.execute(
+            """
+            INSERT INTO dataset_case_corner_case_links (
+                id, dataset_case_id, corner_case_id, link_role, example_count,
+                coverage_status, rationale
+            )
+            VALUES (
+                :id, :dataset_case_id, :corner_case_id, :link_role, :example_count,
+                :coverage_status, :rationale
+            )
+            ON CONFLICT(id) DO UPDATE SET
+                dataset_case_id = excluded.dataset_case_id,
+                corner_case_id = excluded.corner_case_id,
+                link_role = excluded.link_role,
+                example_count = excluded.example_count,
+                coverage_status = excluded.coverage_status,
+                rationale = excluded.rationale
+            """,
+            {
+                "id": link.get("id", f"dcc_{case_id}_{code}_{link.get('role', 'primary')}"),
+                "dataset_case_id": case_id,
+                "corner_case_id": corner_case_id(connection, code),
+                "link_role": link.get("role", "primary"),
+                "example_count": link.get("example_count", 0),
+                "coverage_status": link.get("coverage_status", "planned"),
+                "rationale": link.get("rationale"),
+            },
+        )
+
+
+def upsert_input_requirement_corner_case_links(
+    connection: sqlite3.Connection, input_requirement_id: str, links: list[dict[str, Any]]
+) -> None:
+    for link in links:
+        code = link["corner_case_code"]
+        connection.execute(
+            """
+            INSERT INTO input_requirement_corner_case_links (
+                id, input_requirement_id, corner_case_id, link_role, rationale
+            )
+            VALUES (:id, :input_requirement_id, :corner_case_id, :link_role, :rationale)
+            ON CONFLICT(id) DO UPDATE SET
+                input_requirement_id = excluded.input_requirement_id,
+                corner_case_id = excluded.corner_case_id,
+                link_role = excluded.link_role,
+                rationale = excluded.rationale
+            """,
+            {
+                "id": link.get("id", f"ircc_{input_requirement_id}_{code}_{link.get('role', 'primary')}"),
+                "input_requirement_id": input_requirement_id,
+                "corner_case_id": corner_case_id(connection, code),
+                "link_role": link.get("role", "primary"),
+                "rationale": link.get("rationale"),
             },
         )
 
@@ -391,6 +465,7 @@ def import_dataset(db_path: Path, input_path: Path) -> None:
         upsert_dataset(connection, payload["dataset"])
         for case in payload.get("cases", []):
             upsert_case(connection, payload["dataset"]["id"], case)
+            upsert_dataset_case_corner_case_links(connection, case["id"], case.get("corner_case_links", []))
             upsert_sources(connection, case["id"], case.get("source_materials", []))
             upsert_input_requirements(connection, case["id"], case.get("input_requirements", []))
             upsert_requirements(connection, case["id"], case.get("requirements", []))

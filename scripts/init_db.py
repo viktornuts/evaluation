@@ -10,6 +10,8 @@ DEFAULT_DB = ROOT / "data" / "cpt_eval.sqlite"
 SCHEMA = ROOT / "db" / "schema.sql"
 SEED = ROOT / "db" / "seed.sql"
 CRITERION_TARGETS = ROOT / "db" / "criterion_targets.sql"
+PROFILE_TARGETS = ROOT / "db" / "profile_targets.sql"
+CORNER_CASES = ROOT / "db" / "corner_cases.sql"
 
 
 def run_script(connection: sqlite3.Connection, path: Path) -> None:
@@ -26,6 +28,8 @@ def init_db(db_path: Path, reset: bool) -> None:
         run_script(connection, SCHEMA)
         run_script(connection, SEED)
         run_script(connection, CRITERION_TARGETS)
+        run_script(connection, PROFILE_TARGETS)
+        run_script(connection, CORNER_CASES)
         connection.commit()
 
 

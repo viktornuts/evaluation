@@ -160,6 +160,13 @@ For every dataset case, choose and write `input_profile_code`.
 This profile controls what `10/10` means for the dataset.
 Do not assume that poor/incomplete requirements require the same full-coverage target as a gold dataset.
 
+For corner-case datasets, also write corner-case links:
+- at dataset-case level through `corner_case_links`;
+- at input-requirement level through `input_requirements[].corner_case_links`.
+
+Use `role = primary` for the main corner case and `role = secondary` for additional corner cases covered by the same example.
+The DB stores this in `dataset_case_corner_case_links` and `input_requirement_corner_case_links`.
+
 Put original dataset files under `source/` when possible.
 Put cleaned intermediate files under `normalized/`.
 Put final JSON import files under `import/`.

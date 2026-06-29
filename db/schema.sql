@@ -33,6 +33,21 @@ CREATE TABLE IF NOT EXISTS dataset_profile_criterion_targets (
     UNIQUE (input_profile_code, criterion_group, criterion_code)
 );
 
+CREATE TABLE IF NOT EXISTS corner_cases (
+    id TEXT PRIMARY KEY,
+    code TEXT NOT NULL UNIQUE,
+    class_name TEXT NOT NULL,
+    input_condition TEXT NOT NULL,
+    expected_behavior TEXT NOT NULL,
+    criteria_codes TEXT,
+    source_type TEXT,
+    min_examples INTEGER NOT NULL CHECK (min_examples >= 0),
+    priority TEXT NOT NULL CHECK (priority IN ('low', 'medium', 'high')),
+    dataset_code_suggestion TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS eval_runs (
     id TEXT PRIMARY KEY,
     dataset_id TEXT NOT NULL,
@@ -91,6 +106,22 @@ CREATE TABLE IF NOT EXISTS dataset_case_criterion_targets (
     UNIQUE (dataset_case_id, criterion_group, criterion_code)
 );
 
+CREATE TABLE IF NOT EXISTS dataset_case_corner_case_links (
+    id TEXT PRIMARY KEY,
+    dataset_case_id TEXT NOT NULL,
+    corner_case_id TEXT NOT NULL,
+    link_role TEXT NOT NULL DEFAULT 'primary'
+        CHECK (link_role IN ('primary', 'secondary')),
+    example_count INTEGER NOT NULL DEFAULT 0 CHECK (example_count >= 0),
+    coverage_status TEXT NOT NULL DEFAULT 'planned'
+        CHECK (coverage_status IN ('planned', 'collected', 'imported', 'reference_ready', 'ready_for_run')),
+    rationale TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
+    FOREIGN KEY (corner_case_id) REFERENCES corner_cases(id) ON DELETE RESTRICT,
+    UNIQUE (dataset_case_id, corner_case_id, link_role)
+);
+
 CREATE TABLE IF NOT EXISTS source_materials (
     id TEXT PRIMARY KEY,
     dataset_case_id TEXT NOT NULL,
@@ -124,6 +155,19 @@ CREATE TABLE IF NOT EXISTS input_requirements (
     FOREIGN KEY (dataset_case_id) REFERENCES dataset_cases(id) ON DELETE CASCADE,
     FOREIGN KEY (source_fragment_id) REFERENCES source_fragments(id) ON DELETE SET NULL,
     UNIQUE (dataset_case_id, input_requirement_code)
+);
+
+CREATE TABLE IF NOT EXISTS input_requirement_corner_case_links (
+    id TEXT PRIMARY KEY,
+    input_requirement_id TEXT NOT NULL,
+    corner_case_id TEXT NOT NULL,
+    link_role TEXT NOT NULL DEFAULT 'primary'
+        CHECK (link_role IN ('primary', 'secondary')),
+    rationale TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (input_requirement_id) REFERENCES input_requirements(id) ON DELETE CASCADE,
+    FOREIGN KEY (corner_case_id) REFERENCES corner_cases(id) ON DELETE RESTRICT,
+    UNIQUE (input_requirement_id, corner_case_id, link_role)
 );
 
 CREATE TABLE IF NOT EXISTS requirements (
@@ -512,9 +556,18 @@ CREATE INDEX IF NOT EXISTS idx_dataset_profile_targets_profile
     ON dataset_profile_criterion_targets(input_profile_code, criterion_group, criterion_code);
 CREATE INDEX IF NOT EXISTS idx_dataset_case_targets_case
     ON dataset_case_criterion_targets(dataset_case_id, criterion_group, criterion_code);
+CREATE INDEX IF NOT EXISTS idx_corner_cases_code ON corner_cases(code);
+CREATE INDEX IF NOT EXISTS idx_dataset_case_corner_links_case
+    ON dataset_case_corner_case_links(dataset_case_id);
+CREATE INDEX IF NOT EXISTS idx_dataset_case_corner_links_corner
+    ON dataset_case_corner_case_links(corner_case_id);
 CREATE INDEX IF NOT EXISTS idx_sources_case_id ON source_materials(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_fragments_source_id ON source_fragments(source_material_id);
 CREATE INDEX IF NOT EXISTS idx_input_requirements_case_id ON input_requirements(dataset_case_id);
+CREATE INDEX IF NOT EXISTS idx_input_req_corner_links_input
+    ON input_requirement_corner_case_links(input_requirement_id);
+CREATE INDEX IF NOT EXISTS idx_input_req_corner_links_corner
+    ON input_requirement_corner_case_links(corner_case_id);
 CREATE INDEX IF NOT EXISTS idx_requirements_case_id ON requirements(dataset_case_id);
 CREATE INDEX IF NOT EXISTS idx_input_req_decomp_input_id ON input_requirement_decomposition_links(input_requirement_id);
 CREATE INDEX IF NOT EXISTS idx_input_req_decomp_req_id ON input_requirement_decomposition_links(requirement_id);
@@ -589,3 +642,46 @@ SELECT
     SUM(CASE WHEN source_material_count > 1 THEN 1 ELSE 0 END) AS multi_source_requirements
 FROM requirement_source_summary
 GROUP BY dataset_id, dataset_case_id;
+
+CREATE VIEW IF NOT EXISTS corner_case_dataset_coverage AS
+SELECT
+    cc.id AS corner_case_id,
+    cc.code AS corner_case_code,
+    cc.class_name,
+    cc.min_examples,
+    cc.priority,
+    d.id AS dataset_id,
+    d.name AS dataset_name,
+    d.version AS dataset_version,
+    dc.id AS dataset_case_id,
+    dc.case_code,
+    dc.title AS dataset_case_title,
+    dc.input_profile_code,
+    link.link_role,
+    link.example_count,
+    link.coverage_status,
+    link.rationale
+FROM dataset_case_corner_case_links link
+JOIN corner_cases cc ON cc.id = link.corner_case_id
+JOIN dataset_cases dc ON dc.id = link.dataset_case_id
+JOIN datasets d ON d.id = dc.dataset_id;
+
+CREATE VIEW IF NOT EXISTS corner_case_coverage_summary AS
+SELECT
+    cc.id AS corner_case_id,
+    cc.code AS corner_case_code,
+    cc.class_name,
+    cc.min_examples,
+    cc.priority,
+    COALESCE(SUM(link.example_count), 0) AS linked_example_count,
+    COUNT(DISTINCT link.dataset_case_id) AS linked_dataset_case_count,
+    SUM(CASE WHEN link.link_role = 'primary' THEN 1 ELSE 0 END) AS primary_link_count,
+    SUM(CASE WHEN link.link_role = 'secondary' THEN 1 ELSE 0 END) AS secondary_link_count,
+    CASE
+        WHEN COALESCE(SUM(link.example_count), 0) >= cc.min_examples THEN 'enough_examples'
+        WHEN COALESCE(SUM(link.example_count), 0) = 0 THEN 'not_started'
+        ELSE 'not_enough_examples'
+    END AS min_examples_status
+FROM corner_cases cc
+LEFT JOIN dataset_case_corner_case_links link ON link.corner_case_id = cc.id
+GROUP BY cc.id;

@@ -139,6 +139,7 @@ run_v7/
 - тест-кейсы для каждого датасета;
 - понятные `dataset_code` и `case_code`.
 - профиль входа `input_profile_code` для каждого `dataset_case`.
+- corner-case разметка `CC-xx`, если это не gold-датасет.
 
 Профиль берется из БД (`dataset_cases.input_profile_code`). Если датасет новый и профиля нет, оценщик просит пользователя выбрать профиль до выставления оценок.
 
@@ -152,6 +153,14 @@ run_v7/
 - `abstract_high_level_docs`.
 
 Профиль определяет, что считается целевым результатом. Например, для `customer_gold_requirements` цель - полное совпадение с эталоном, а для `incomplete_fragmented_docs` цель - безопасное частичное покрытие без галлюцинаций.
+
+Corner-case разметка хранится в БД:
+
+- `corner_cases` - справочник `CC-01`..`CC-18`;
+- `dataset_case_corner_case_links` - связь dataset case с corner cases;
+- `input_requirement_corner_case_links` - связь конкретного входного требования/примера с corner cases.
+
+Если пользователь прислал датасет и заявил `CC-xx`, оценщик проверяет, соответствует ли содержимое заявленному corner case. Если пример покрывает несколько corner cases, один указывается как `primary`, остальные как `secondary`.
 
 ### Если нет файла версии агента
 

@@ -73,8 +73,35 @@ The current MVP importer accepts one JSON file with this shape:
       "title": "Password recovery requirements",
       "input_profile_code": "complete_technical_docs",
       "input_profile_name": "Structured and complete technical documentation",
+      "corner_case_links": [
+        {
+          "corner_case_code": "CC-05",
+          "role": "primary",
+          "example_count": 4,
+          "coverage_status": "collected",
+          "rationale": "Dataset case contains four conflicting input requirements."
+        }
+      ],
       "source_materials": [],
-      "input_requirements": [],
+      "input_requirements": [
+        {
+          "id": "input_req_001",
+          "input_requirement_code": "IN-001",
+          "requirement_text": "Example source requirement text.",
+          "corner_case_links": [
+            {
+              "corner_case_code": "CC-05",
+              "role": "primary",
+              "rationale": "This input requirement contains the actual conflict."
+            },
+            {
+              "corner_case_code": "CC-09",
+              "role": "secondary",
+              "rationale": "The same example is also ambiguous between API and integration."
+            }
+          ]
+        }
+      ],
       "requirements": [],
       "input_requirement_decomposition_links": [],
       "test_cases": [],
@@ -93,6 +120,25 @@ The current MVP importer accepts one JSON file with this shape:
 - optional `title`;
 - optional `source_fragment_id`;
 - optional `requirement_order`.
+- optional `corner_case_links`.
+
+`corner_case_links` marks which corner cases are covered by a dataset case or by a concrete input requirement.
+
+At dataset-case level:
+
+- `corner_case_code` - for example `CC-05`;
+- `role` - `primary` or `secondary`;
+- `example_count` - how many input examples in this dataset case cover the corner case;
+- `coverage_status` - `planned`, `collected`, `imported`, `reference_ready`, or `ready_for_run`;
+- optional `rationale`.
+
+At input-requirement level:
+
+- `corner_case_code`;
+- `role` - `primary` or `secondary`;
+- optional `rationale`.
+
+Use `primary` for the main reason the example exists. Use `secondary` when the same example also touches another corner case.
 
 `requirements` stores the expected or generated atomic requirements after decomposition.
 
