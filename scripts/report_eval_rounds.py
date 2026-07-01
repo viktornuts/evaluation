@@ -168,6 +168,15 @@ def compact_name_version(name: str | None, version: str | None) -> str:
     return " ".join(values)
 
 
+def compact_run_date(value: str | None) -> str:
+    if not value:
+        return "—"
+    normalized = value.replace("T", " ")
+    if len(normalized) >= 16:
+        return normalized[:16]
+    return normalized
+
+
 def table_block(
     title: str,
     rows: list[tuple[str, str]],
@@ -217,16 +226,17 @@ def run_summary_table(connection: sqlite3.Connection, runs: list[sqlite3.Row]) -
     lines = [
         "## Параметры прогонов",
         "",
-        "| Раунд | Run code | ТК | Что изменили | Агент | Модель | Temperature | Top P | Режим |",
-        "|---:|---|---:|---|---|---|---:|---:|---|",
+        "| Раунд | Run code | Дата раунда | ТК | Что изменили | Агент | Модель | Temperature | Top P | Режим |",
+        "|---:|---|---|---:|---|---|---|---:|---:|---|",
     ]
     if not runs:
-        lines.append("| 1 | — | — | — | — | — | — | — | — |")
+        lines.append("| 1 | — | — | — | — | — | — | — | — | — |")
     for index, run in enumerate(runs, start=1):
         lines.append(
             "| "
             f"{index} | "
             f"`{run['run_code']}` | "
+            f"{compact_run_date(run['started_at'])} | "
             f"{generated_case_count(connection, run['id'])} | "
             f"{run['change_summary'] or '—'} | "
             f"{compact_name_version(run['agent_name'], run['agent_version'])} | "
